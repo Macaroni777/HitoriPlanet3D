@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using MoreMountains.Tools;
+using PlasticPipe.PlasticProtocol.Messages;
 using UnityEngine;
 
 namespace MoreMountains.CorgiEngine
@@ -15,7 +16,7 @@ namespace MoreMountains.CorgiEngine
 		/// the weapon you want this component to pilot
 		[Tooltip("the weapon you want this component to pilot")]
 		public Weapon TargetWeapon;
-		
+
 		[Header("On Start")]
 		/// if this is true, the WeaponHandler will begin shooting automatically on start
 		[Tooltip("if this is true, the WeaponHandler will begin shooting automatically on start")]
@@ -24,7 +25,7 @@ namespace MoreMountains.CorgiEngine
 		[Tooltip("the delay, in seconds, to wait before shooting on start")]
 		public float InitialDelayOnStart = 1f;
 
-		[Header("Debug")] 
+		[Header("Debug")]
 		[MMInspectorButton("StartShooting")]
 		public bool StartShootingButton;
 		[MMInspectorButton("StopShooting")]

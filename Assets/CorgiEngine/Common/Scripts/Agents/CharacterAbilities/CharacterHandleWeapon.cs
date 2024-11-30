@@ -3,15 +3,15 @@ using System.Collections;
 using MoreMountains.Tools;
 
 namespace MoreMountains.CorgiEngine
-{	
+{
 	/// <summary>
 	/// Add this class to a character so it can use weapons
 	/// Note that this component will trigger animations (if their parameter is present in the Animator), based on 
 	/// the current weapon's Animations
 	/// Animator parameters : defined from the Weapon's inspector
 	/// </summary>
-	[AddComponentMenu("Corgi Engine/Character/Abilities/Character Handle Weapon")] 
-	public class CharacterHandleWeapon : CharacterAbility 
+	[AddComponentMenu("Corgi Engine/Character/Abilities/Character Handle Weapon")]
+	public class CharacterHandleWeapon : CharacterAbility
 	{
 		/// This method is only used to display a helpbox text at the beginning of the ability's inspector
 		public override string HelpBoxText() { return "This component will allow your character to pickup and use weapons. What the weapon will do is defined in the Weapon classes. This just describes the behaviour of the 'hand' holding the weapon, not the weapon itself. Here you can set an initial weapon for your character to start with, allow weapon pickup, and specify a weapon attachment (a transform inside of your character, could be just an empty child gameobject, or a subpart of your model."; }
@@ -58,7 +58,7 @@ namespace MoreMountains.CorgiEngine
 		[Tooltip("if this is set to true, the character will be forced to face the current weapon direction")]
 		public bool FaceWeaponDirection = false;
 		/// if this is true, horizontal aim will be inverted when shooting while wallclinging, to shoot away from the wall
-		[Tooltip("if this is true, horizontal aim will be inverted when shooting while wallclinging, to shoot away from the wall")] 
+		[Tooltip("if this is true, horizontal aim will be inverted when shooting while wallclinging, to shoot away from the wall")]
 		public bool InvertHorizontalAimWhenWallclinging = false;
 		/// if this is true, the character will continuously fire its weapon
 		[Tooltip("if this is true, the character will continuously fire its weapon")]
@@ -77,7 +77,7 @@ namespace MoreMountains.CorgiEngine
 		[MMCondition("BufferInput", true)]
 		[Tooltip("the maximum duration for the buffer, in seconds")]
 		public float MaximumBufferDuration = 0.25f;
-        
+
 		[Header("Debug")]
 		/// returns the current equipped weapon
 		[MMReadOnly]
@@ -106,14 +106,14 @@ namespace MoreMountains.CorgiEngine
 		protected Vector2 _invertedHorizontalAimMultiplier = new Vector2(-1f, 1f);
 
 		// Initialization
-		protected override void Initialization () 
+		protected override void Initialization()
 		{
 			base.Initialization();
 			if (_characterHorizontalMovement != null)
 			{
 				_charHztlMvmtFlipInitialSetting = _characterHorizontalMovement.FlipCharacterToFaceDirection;
 			}
-			Setup ();
+			Setup();
 		}
 
 		/// <summary>
@@ -123,16 +123,16 @@ namespace MoreMountains.CorgiEngine
 		{
 			_character = gameObject.GetComponentInParent<Character>();
 			CharacterAnimator = _animator;
-            
+
 			// filler if the WeaponAttachment has not been set
-			if (WeaponAttachment==null)
+			if (WeaponAttachment == null)
 			{
-				WeaponAttachment=transform;
-			}		
+				WeaponAttachment = transform;
+			}
 			if (_animator != null)
 			{
-				_weaponIK = _animator.GetComponent<WeaponIK> ();
-			}	
+				_weaponIK = _animator.GetComponent<WeaponIK>();
+			}
 			// we set the initial weapon
 			if (InitialWeapon != null)
 			{
@@ -145,8 +145,8 @@ namespace MoreMountains.CorgiEngine
 		/// </summary>
 		public override void ProcessAbility()
 		{
-			base.ProcessAbility ();
-			UpdateAmmoDisplay (); 
+			base.ProcessAbility();
+			UpdateAmmoDisplay();
 			HandleBuffer();
 			HandleFacingDirection();
 			HandleWeaponStop();
@@ -164,7 +164,7 @@ namespace MoreMountains.CorgiEngine
 
 			if (CurrentWeapon.WeaponState.CurrentState == Weapon.WeaponStates.WeaponStop)
 			{
-				PlayAbilityStopFeedbacks();	
+				PlayAbilityStopFeedbacks();
 			}
 		}
 
@@ -183,14 +183,14 @@ namespace MoreMountains.CorgiEngine
 			{
 				_characterHorizontalMovement.FlipCharacterToFaceDirection = _charHztlMvmtFlipInitialSetting;
 			}
-            
-			
-			
+
+
+
 			if (InvertHorizontalAimWhenWallclinging && (_movement.CurrentState == CharacterStates.MovementStates.WallClinging))
 			{
 				if (_aimableWeapon != null)
 				{
-					_aimableWeapon.CurrentAimMultiplier = _invertedHorizontalAimMultiplier;	
+					_aimableWeapon.CurrentAimMultiplier = _invertedHorizontalAimMultiplier;
 				}
 
 				if (_projectileWeapon != null)
@@ -214,16 +214,16 @@ namespace MoreMountains.CorgiEngine
 		/// <summary>
 		/// Gets input and triggers methods based on what's been pressed
 		/// </summary>
-		protected override void HandleInput ()
+		protected override void HandleInput()
 		{
 			bool shootFromLaddersAuthorized = (CanShootFromLadders &&
-			                                   (_movement.CurrentState ==
-			                                    CharacterStates.MovementStates.LadderClimbing));
-			
+											   (_movement.CurrentState ==
+												CharacterStates.MovementStates.LadderClimbing));
+
 			if (!AbilityAuthorized
-			    || ((_condition.CurrentState != CharacterStates.CharacterConditions.Normal)
-			         && !shootFromLaddersAuthorized)
-			    || (CurrentWeapon == null))
+				|| ((_condition.CurrentState != CharacterStates.CharacterConditions.Normal)
+					 && !shootFromLaddersAuthorized)
+				|| (CurrentWeapon == null))
 			{
 				return;
 			}
@@ -240,7 +240,7 @@ namespace MoreMountains.CorgiEngine
 
 			bool buttonPressed =
 				(_inputManager.ShootButton.State.CurrentState == MMInput.ButtonStates.ButtonPressed) ||
-				(_inputManager.ShootAxis == MMInput.ButtonStates.ButtonPressed); 
+				(_inputManager.ShootAxis == MMInput.ButtonStates.ButtonPressed);
 
 			if (ContinuousPress && (CurrentWeapon.TriggerMode == Weapon.TriggerModes.Auto) && buttonPressed)
 			{
@@ -261,11 +261,11 @@ namespace MoreMountains.CorgiEngine
 			if (CurrentWeapon != null)
 			{
 				if ((CurrentWeapon.WeaponState.CurrentState == Weapon.WeaponStates.WeaponDelayBetweenUses)
-				    && ((_inputManager.ShootAxis == MMInput.ButtonStates.Off) && (_inputManager.ShootButton.State.CurrentState == MMInput.ButtonStates.Off)))
+					&& ((_inputManager.ShootAxis == MMInput.ButtonStates.Off) && (_inputManager.ShootButton.State.CurrentState == MMInput.ButtonStates.Off)))
 				{
 					CurrentWeapon.WeaponInputStop();
 				}
-			}            
+			}
 		}
 
 		/// <summary>
@@ -289,16 +289,16 @@ namespace MoreMountains.CorgiEngine
 				_buffering = false;
 			}
 		}
-						
+
 		/// <summary>
 		/// Causes the character to start shooting
 		/// </summary>
 		public virtual void ShootStart()
 		{
 			// if the Shoot action is enabled in the permissions, we continue, if not we do nothing.  If the player is dead we do nothing.
-			if ( !AbilityAuthorized
-			     || (CurrentWeapon == null)
-			     || ((_condition.CurrentState != CharacterStates.CharacterConditions.Normal) && (_condition.CurrentState != CharacterStates.CharacterConditions.ControlledMovement)))
+			if (!AbilityAuthorized
+				 || (CurrentWeapon == null)
+				 || ((_condition.CurrentState != CharacterStates.CharacterConditions.Normal) && (_condition.CurrentState != CharacterStates.CharacterConditions.ControlledMovement)))
 			{
 				return;
 			}
@@ -323,7 +323,7 @@ namespace MoreMountains.CorgiEngine
 			MMCharacterEvent.Trigger(_character, MMCharacterEventTypes.HandleWeapon, MMCharacterEvent.Moments.Start);
 			CurrentWeapon.WeaponInputStart();
 		}
-		
+
 		/// <summary>
 		/// Causes the character to stop shooting
 		/// </summary>
@@ -331,11 +331,11 @@ namespace MoreMountains.CorgiEngine
 		{
 			// if the Shoot action is enabled in the permissions, we continue, if not we do nothing
 			if (!AbilityAuthorized
-			    || (CurrentWeapon == null)
-			    || (_movement == null))
+				|| (CurrentWeapon == null)
+				|| (_movement == null))
 			{
-				return;		
-			}		
+				return;
+			}
 
 			if (!CanShootFromLadders && _movement.CurrentState == CharacterStates.MovementStates.LadderClimbing && CurrentWeapon.WeaponState.CurrentState == Weapon.WeaponStates.WeaponIdle)
 			{
@@ -343,10 +343,10 @@ namespace MoreMountains.CorgiEngine
 			}
 
 			if ((CurrentWeapon.WeaponState.CurrentState == Weapon.WeaponStates.WeaponReload)
-			    || (CurrentWeapon.WeaponState.CurrentState == Weapon.WeaponStates.WeaponReloadStart)
-			    || (CurrentWeapon.WeaponState.CurrentState == Weapon.WeaponStates.WeaponReloadStop)
-			    || (CurrentWeapon.WeaponState.CurrentState == Weapon.WeaponStates.WeaponUse)
-			    || (CurrentWeapon.WeaponState.CurrentState == Weapon.WeaponStates.WeaponInCooldown))
+				|| (CurrentWeapon.WeaponState.CurrentState == Weapon.WeaponStates.WeaponReloadStart)
+				|| (CurrentWeapon.WeaponState.CurrentState == Weapon.WeaponStates.WeaponReloadStop)
+				|| (CurrentWeapon.WeaponState.CurrentState == Weapon.WeaponStates.WeaponUse)
+				|| (CurrentWeapon.WeaponState.CurrentState == Weapon.WeaponStates.WeaponInCooldown))
 			{
 				return;
 			}
@@ -365,7 +365,7 @@ namespace MoreMountains.CorgiEngine
 			MMCharacterEvent.Trigger(_character, MMCharacterEventTypes.HandleWeapon, MMCharacterEvent.Moments.End);
 			CurrentWeapon.TurnWeaponOff();
 		}
-		
+
 		/// <summary>
 		/// A method used (usually by AIs) to force the weapon to stop
 		/// </summary>
@@ -383,10 +383,10 @@ namespace MoreMountains.CorgiEngine
 		{
 			if (CurrentWeapon != null)
 			{
-				CurrentWeapon.InitiateReloadWeapon ();
+				CurrentWeapon.InitiateReloadWeapon();
 			}
 		}
-		
+
 		/// <summary>
 		/// Changes the character's current weapon to the one passed as a parameter
 		/// </summary>
@@ -404,7 +404,7 @@ namespace MoreMountains.CorgiEngine
 					if (_character._animator != null)
 					{
 						AnimatorControllerParameter[] parameters = _character._animator.parameters;
-						foreach(AnimatorControllerParameter parameter in parameters)
+						foreach (AnimatorControllerParameter parameter in parameters)
 						{
 							if (parameter.name == CurrentWeapon.EquippedAnimationParameter)
 							{
@@ -416,23 +416,23 @@ namespace MoreMountains.CorgiEngine
 					Destroy(CurrentWeapon.gameObject);
 				}
 			}
-            
+
 			if (newWeapon != null)
-			{			
+			{
 				if (!combo)
 				{
-					CurrentWeapon = (Weapon)Instantiate(newWeapon, WeaponAttachment.transform.position + newWeapon.WeaponAttachmentOffset, Quaternion.identity, WeaponAttachment.transform); 
-				}				
+					CurrentWeapon = (Weapon)Instantiate(newWeapon, WeaponAttachment.transform.position + newWeapon.WeaponAttachmentOffset, Quaternion.identity, WeaponAttachment.transform);
+				}
 				if (ForceWeaponScaleResetOnEquip)
 				{
 					CurrentWeapon.transform.localScale = Vector3.one;
 				}
 				if (ForceWeaponRotationResetOnEquip)
 				{
-					CurrentWeapon.transform.localRotation = Quaternion.identity;    
+					CurrentWeapon.transform.localRotation = Quaternion.identity;
 				}
-                
-				CurrentWeapon.SetOwner (_character, this);
+
+				CurrentWeapon.SetOwner(_character, this);
 				CurrentWeapon.WeaponID = weaponID;
 				_aimableWeapon = CurrentWeapon.GetComponent<WeaponAim>();
 				_projectileWeapon = CurrentWeapon.GetComponent<ProjectileWeapon>();
@@ -456,13 +456,13 @@ namespace MoreMountains.CorgiEngine
 							CurrentWeapon.FlipWeaponModel();
 						}
 					}
-				}				
+				}
 			}
 			else
 			{
 				CurrentWeapon = null;
 			}
-		}	
+		}
 
 		/// <summary>
 		/// Flips the current weapon if needed
@@ -484,35 +484,35 @@ namespace MoreMountains.CorgiEngine
 		/// </summary>
 		public virtual void UpdateAmmoDisplay()
 		{
-			if ( (GUIManager.HasInstance) && (_character.CharacterType == Character.CharacterTypes.Player) )
+			if ((GUIManager.HasInstance) && (_character.CharacterType == Character.CharacterTypes.Player))
 			{
 				if (CurrentWeapon == null)
 				{
-					GUIManager.Instance.SetAmmoDisplays (false, _character.PlayerID, AmmoDisplayID);
+					GUIManager.Instance.SetAmmoDisplays(false, _character.PlayerID, AmmoDisplayID);
 					return;
 				}
 
 				if (!CurrentWeapon.MagazineBased && (CurrentWeapon.WeaponAmmo == null))
 				{
-					GUIManager.Instance.SetAmmoDisplays (false, _character.PlayerID, AmmoDisplayID);
+					GUIManager.Instance.SetAmmoDisplays(false, _character.PlayerID, AmmoDisplayID);
 					return;
 				}
 
 				if (CurrentWeapon.WeaponAmmo == null)
-				{					
-					GUIManager.Instance.SetAmmoDisplays (true, _character.PlayerID, AmmoDisplayID);
-					GUIManager.Instance.UpdateAmmoDisplays(CurrentWeapon.MagazineBased, 0, 0, CurrentWeapon.CurrentAmmoLoaded, CurrentWeapon.MagazineSize, _character.PlayerID, AmmoDisplayID, false);	
+				{
+					GUIManager.Instance.SetAmmoDisplays(true, _character.PlayerID, AmmoDisplayID);
+					GUIManager.Instance.UpdateAmmoDisplays(CurrentWeapon.MagazineBased, 0, 0, CurrentWeapon.CurrentAmmoLoaded, CurrentWeapon.MagazineSize, _character.PlayerID, AmmoDisplayID, false);
 					return;
 				}
 				else
 				{
-					GUIManager.Instance.SetAmmoDisplays (true, _character.PlayerID, AmmoDisplayID);
+					GUIManager.Instance.SetAmmoDisplays(true, _character.PlayerID, AmmoDisplayID);
 					GUIManager.Instance.UpdateAmmoDisplays(CurrentWeapon.MagazineBased, CurrentWeapon.WeaponAmmo.CurrentAmmoAvailable + CurrentWeapon.CurrentAmmoLoaded, CurrentWeapon.WeaponAmmo.MaxAmmo, CurrentWeapon.CurrentAmmoLoaded, CurrentWeapon.MagazineSize, _character.PlayerID, AmmoDisplayID, true);
 					return;
 				}
 			}
 		}
-		
+
 		/// <summary>
 		/// On respawn we setup our weapon again
 		/// </summary>
@@ -521,7 +521,7 @@ namespace MoreMountains.CorgiEngine
 			base.OnRespawn();
 			Setup();
 		}
-        
+
 		/// <summary>
 		/// On hit we interrupt our weapon if needed
 		/// </summary>

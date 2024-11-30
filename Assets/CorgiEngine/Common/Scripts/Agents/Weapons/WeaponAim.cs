@@ -7,14 +7,14 @@ using UnityEngine.InputSystem;
 #endif
 
 namespace MoreMountains.CorgiEngine
-{	
+{
 	/// <summary>
 	/// Add this component to a Weapon and you'll be able to aim it (meaning you'll rotate it)
 	/// Supported control modes are mouse, primary movement (you aim wherever you direct your character) and secondary movement (using a secondary axis, separate from the movement).
 	/// </summary>
 	[RequireComponent(typeof(Weapon))]
 	[AddComponentMenu("Corgi Engine/Weapons/Weapon Aim")]
-	public class WeaponAim : CorgiMonoBehaviour 
+	public class WeaponAim : CorgiMonoBehaviour
 	{
 		/// the list of possible control modes
 		public enum AimControls { Off, PrimaryMovement, SecondaryMovement, Mouse, Script }
@@ -22,14 +22,14 @@ namespace MoreMountains.CorgiEngine
 		public enum RotationModes { Free, Strict4Directions, Strict8Directions }
 
 		[Header("Control Mode")]
-		[MMInformation("Add this component to a Weapon and you'll be able to aim (rotate) it. It supports three different control modes : mouse (the weapon aims towards the pointer), primary movement (you'll aim towards the current input direction), or secondary movement (aims towards a second input axis, think twin stick shooters).",MoreMountains.Tools.MMInformationAttribute.InformationType.Info,false)]
+		[MMInformation("Add this component to a Weapon and you'll be able to aim (rotate) it. It supports three different control modes : mouse (the weapon aims towards the pointer), primary movement (you'll aim towards the current input direction), or secondary movement (aims towards a second input axis, think twin stick shooters).", MoreMountains.Tools.MMInformationAttribute.InformationType.Info, false)]
 
 		/// the aim control mode of choice (off : no control, primary movement (typically your left stick), secondary  (right stick), mouse, script : when you want a script to drive your aim (typically for AI, but not only)
 		[Tooltip("the aim control mode of choice (off : no control, primary movement (typically your left stick), secondary  (right stick), mouse, script : when you want a script to drive your aim (typically for AI, but not only)")]
 		public AimControls AimControl = AimControls.SecondaryMovement;
-		
+
 		[Header("Weapon Rotation")]
-		[MMInformation("Here you can define whether the rotation is free, strict in 4 directions (top, bottom, left, right), or 8 directions (same + diagonals). You can also define a rotation speed, and a min and max angle. For example, if you don't want your character to be able to aim in its back, set min angle to -90 and max angle to 90.",MoreMountains.Tools.MMInformationAttribute.InformationType.Info,false)]
+		[MMInformation("Here you can define whether the rotation is free, strict in 4 directions (top, bottom, left, right), or 8 directions (same + diagonals). You can also define a rotation speed, and a min and max angle. For example, if you don't want your character to be able to aim in its back, set min angle to -90 and max angle to 90.", MoreMountains.Tools.MMInformationAttribute.InformationType.Info, false)]
 
 		/// the rotation mode
 		[Tooltip("the rotation mode")]
@@ -60,7 +60,7 @@ namespace MoreMountains.CorgiEngine
 		public bool IgnoreDownWhenGrounded = false;
 
 		[Header("Reticle")]
-		[MMInformation("You can also display a reticle on screen to check where you're aiming at. Leave it blank if you don't want to use one. If you set the reticle distance to 0, it'll follow the cursor, otherwise it'll be on a circle centered on the weapon. You can also ask it to follow the mouse, even replace the mouse pointer. You can also decide if the pointer should rotate to reflect aim angle or remain stable.",MoreMountains.Tools.MMInformationAttribute.InformationType.Info,false)]
+		[MMInformation("You can also display a reticle on screen to check where you're aiming at. Leave it blank if you don't want to use one. If you set the reticle distance to 0, it'll follow the cursor, otherwise it'll be on a circle centered on the weapon. You can also ask it to follow the mouse, even replace the mouse pointer. You can also decide if the pointer should rotate to reflect aim angle or remain stable.", MoreMountains.Tools.MMInformationAttribute.InformationType.Info, false)]
 
 		/// the gameobject to display as the aim's reticle/crosshair. Leave it blank if you don't want a reticle
 		[Tooltip("the gameobject to display as the aim's reticle/crosshair. Leave it blank if you don't want a reticle")]
@@ -97,10 +97,10 @@ namespace MoreMountains.CorgiEngine
 		/// the current angle the weapon is aiming at
 		public float CurrentAngle { get; protected set; }
 		/// the current angle the weapon is aiming at, adjusted to compensate for the current orientation of the character
-		public float CurrentAngleRelative 
+		public float CurrentAngleRelative
 		{
-			get 
-			{  
+			get
+			{
 				if (_weapon != null)
 				{
 					if (_weapon.Owner != null)
@@ -118,7 +118,7 @@ namespace MoreMountains.CorgiEngine
 				return 0;
 			}
 		}
-		
+
 		public Vector2 CurrentAimMultiplier { get; set; }
 
 		protected Weapon _weapon;
@@ -151,36 +151,36 @@ namespace MoreMountains.CorgiEngine
 		/// </summary>
 		protected virtual void Initialization()
 		{
-			_weapon = this.gameObject.GetComponent<Weapon> ();
+			_weapon = this.gameObject.GetComponent<Weapon>();
 			_weapons = this.gameObject.GetComponents<Weapon>().ToList();
-			
+
 			if (_weapon.Owner != null)
 			{
-				_characterGravity = _weapon.Owner?.FindAbility<CharacterGravity> ();
+				_characterGravity = _weapon.Owner?.FindAbility<CharacterGravity>();
 				_controller = _weapon.Owner.GetComponent<CorgiController>();
 			}
 
 			if (RotationMode == RotationModes.Strict4Directions)
 			{
 				_possibleAngleValues = new float[5];
-				_possibleAngleValues [0] = -180f;
-				_possibleAngleValues [1] = -90f;
-				_possibleAngleValues [2] = 0f;
-				_possibleAngleValues [3] = 90f;
-				_possibleAngleValues [4] = 180f;
+				_possibleAngleValues[0] = -180f;
+				_possibleAngleValues[1] = -90f;
+				_possibleAngleValues[2] = 0f;
+				_possibleAngleValues[3] = 90f;
+				_possibleAngleValues[4] = 180f;
 			}
 			if (RotationMode == RotationModes.Strict8Directions)
 			{
 				_possibleAngleValues = new float[9];
-				_possibleAngleValues [0] = -180f;
-				_possibleAngleValues [1] = -135f;
-				_possibleAngleValues [2] = -90f;
-				_possibleAngleValues [3] = -45f;
-				_possibleAngleValues [4] = 0f;
-				_possibleAngleValues [5] = 45f;
-				_possibleAngleValues [6] = 90f;
-				_possibleAngleValues [7] = 135f;
-				_possibleAngleValues [8] = 180f;
+				_possibleAngleValues[0] = -180f;
+				_possibleAngleValues[1] = -135f;
+				_possibleAngleValues[2] = -90f;
+				_possibleAngleValues[3] = -45f;
+				_possibleAngleValues[4] = 0f;
+				_possibleAngleValues[5] = 45f;
+				_possibleAngleValues[6] = 90f;
+				_possibleAngleValues[7] = 135f;
+				_possibleAngleValues[8] = 180f;
 			}
 			_initialRotation = transform.rotation;
 			InitializeReticle();
@@ -246,7 +246,7 @@ namespace MoreMountains.CorgiEngine
 					}
 
 					bool contraMode = (IgnoreDownWhenGrounded && (_controller != null) && (_controller.State.IsGrounded));
-										
+
 					if (_weapon.Owner.IsFacingRight)
 					{
 						_currentAim = _weapon.Owner.LinkedInputManager.PrimaryMovement;
@@ -257,7 +257,7 @@ namespace MoreMountains.CorgiEngine
 							_currentAim.y = 0;
 							_direction.y = 0;
 						}
-					} 
+					}
 					else
 					{
 						_currentAim = -_weapon.Owner.LinkedInputManager.PrimaryMovement;
@@ -272,7 +272,7 @@ namespace MoreMountains.CorgiEngine
 
 					if (_characterGravity != null)
 					{
-						_currentAim = MMMaths.RotateVector2 (_currentAim,_characterGravity.GravityAngle);
+						_currentAim = MMMaths.RotateVector2(_currentAim, _characterGravity.GravityAngle);
 						if (_characterGravity.ShouldReverseInput())
 						{
 							_currentAim = -_currentAim;
@@ -297,7 +297,7 @@ namespace MoreMountains.CorgiEngine
 						_currentAim = -_weapon.Owner.LinkedInputManager.SecondaryMovement;
 						_currentAim *= CurrentAimMultiplier;
 						_direction = -(transform.position - _currentAim);
-					}										
+					}
 					break;
 
 				case AimControls.Mouse:
@@ -306,14 +306,14 @@ namespace MoreMountains.CorgiEngine
 						return;
 					}
 
-					#if !ENABLE_INPUT_SYSTEM || ENABLE_LEGACY_INPUT_MANAGER
+#if !ENABLE_INPUT_SYSTEM || ENABLE_LEGACY_INPUT_MANAGER
 					_mousePosition = Input.mousePosition;
-					#else
+#else
 					_mousePosition = Mouse.current.position.ReadValue();
-					#endif
+#endif
 					_mousePosition.z = _mainCamera.transform.position.z * -1;
 
-					_direction = _mainCamera.ScreenToWorldPoint (_mousePosition);
+					_direction = _mainCamera.ScreenToWorldPoint(_mousePosition);
 					_direction.z = transform.position.z;
 
 					if (_weapon.Owner.IsFacingRight)
@@ -324,7 +324,7 @@ namespace MoreMountains.CorgiEngine
 					{
 						_currentAim = transform.position - _direction;
 					}
-					break;			
+					break;
 			}
 		}
 
@@ -337,22 +337,22 @@ namespace MoreMountains.CorgiEngine
 			foreach (Weapon weapon in _weapons)
 			{
 				if (weapon.WeaponState.CurrentState == Weapon.WeaponStates.WeaponDelayBeforeUse
-				    || weapon.WeaponState.CurrentState == Weapon.WeaponStates.WeaponUse
-				    || weapon.WeaponState.CurrentState == Weapon.WeaponStates.WeaponDelayBetweenUses)
+					|| weapon.WeaponState.CurrentState == Weapon.WeaponStates.WeaponUse
+					|| weapon.WeaponState.CurrentState == Weapon.WeaponStates.WeaponDelayBetweenUses)
 				{
 					weaponInUse = true;
 				}
 			}
-			
+
 			if (PreventAimWhileWeaponIsInUse && weaponInUse)
 			{
 				return;
 			}
-			
-			GetCurrentAim ();
-			DetermineWeaponRotation ();
+
+			GetCurrentAim();
+			DetermineWeaponRotation();
 			MoveReticle();
-			HideReticle ();
+			HideReticle();
 			ResetCurrentAimMultiplier();
 		}
 
@@ -374,12 +374,12 @@ namespace MoreMountains.CorgiEngine
 				if (_direction != Vector3.zero)
 				{
 					// we compute our angle in degrees
-					CurrentAngle = Mathf.Atan2 (_currentAim.y, _currentAim.x) * Mathf.Rad2Deg;
+					CurrentAngle = Mathf.Atan2(_currentAim.y, _currentAim.x) * Mathf.Rad2Deg;
 
 					// we round to the closest angle
 					if (RotationMode == RotationModes.Strict4Directions || RotationMode == RotationModes.Strict8Directions)
 					{
-						CurrentAngle = (_weapon.Owner.IsFacingRight) ? MMMaths.RoundToClosest (CurrentAngle, _possibleAngleValues) : -MMMaths.RoundToClosest(-CurrentAngle, _possibleAngleValues);
+						CurrentAngle = (_weapon.Owner.IsFacingRight) ? MMMaths.RoundToClosest(CurrentAngle, _possibleAngleValues) : -MMMaths.RoundToClosest(-CurrentAngle, _possibleAngleValues);
 					}
 
 					// we add our additional angle
@@ -388,13 +388,13 @@ namespace MoreMountains.CorgiEngine
 					// we clamp the angle to the min/max values set in the inspector
 					if (_weapon.Owner.IsFacingRight)
 					{
-						CurrentAngle = Mathf.Clamp (CurrentAngle, MinimumAngle, MaximumAngle);	
+						CurrentAngle = Mathf.Clamp(CurrentAngle, MinimumAngle, MaximumAngle);
 					}
 					else
 					{
-						CurrentAngle = Mathf.Clamp (CurrentAngle, -MaximumAngle, -MinimumAngle);	
+						CurrentAngle = Mathf.Clamp(CurrentAngle, -MaximumAngle, -MinimumAngle);
 					}
-					_lookRotation = Quaternion.Euler (CurrentAngle * Vector3.forward);
+					_lookRotation = Quaternion.Euler(CurrentAngle * Vector3.forward);
 					RotateWeapon(_lookRotation);
 				}
 			}
@@ -403,11 +403,11 @@ namespace MoreMountains.CorgiEngine
 				CurrentAngle = 0f;
 				if (_characterGravity == null)
 				{
-					RotateWeapon(_initialRotation);	
+					RotateWeapon(_initialRotation);
 				}
 				else
 				{
-					RotateWeapon (_characterGravity.transform.rotation);
+					RotateWeapon(_characterGravity.transform.rotation);
 				}
 				if (_additionalAngle != 0f)
 				{
@@ -415,7 +415,7 @@ namespace MoreMountains.CorgiEngine
 					_lookRotation = Quaternion.Euler(CurrentAngle * Vector3.forward);
 					RotateWeapon(_lookRotation);
 				}
-                
+
 			}
 			if (_weapon.Owner.IsFacingRight)
 			{
@@ -441,12 +441,12 @@ namespace MoreMountains.CorgiEngine
 			// if the rotation speed is == 0, we have instant rotation
 			if (WeaponRotationSpeed == 0)
 			{
-				transform.rotation = newRotation;	
+				transform.rotation = newRotation;
 			}
 			// otherwise we lerp the rotation
 			else
-			{				
-				transform.rotation = Quaternion.Lerp (transform.rotation, newRotation, WeaponRotationSpeed * Time.deltaTime);
+			{
+				transform.rotation = Quaternion.Lerp(transform.rotation, newRotation, WeaponRotationSpeed * Time.deltaTime);
 			}
 
 			if (InstantFlip && (WasFacingRightLastFrame != _weapon.Owner.IsFacingRight))
@@ -476,7 +476,7 @@ namespace MoreMountains.CorgiEngine
 		/// Every frame, moves the reticle if it's been told to follow the pointer
 		/// </summary>
 		protected virtual void MoveReticle()
-		{		
+		{
 			if (_reticle == null) { return; }
 
 			// if we're not supposed to rotate the reticle, we force its rotation, otherwise we apply the current look rotation
@@ -495,7 +495,7 @@ namespace MoreMountains.CorgiEngine
 			// if we're in follow mouse mode and the current control scheme is mouse, we move the reticle to the mouse's position
 			if (ReticleAtMousePosition && AimControl == AimControls.Mouse)
 			{
-				_reticlePosition = _mainCamera.ScreenToWorldPoint (_mousePosition);
+				_reticlePosition = _mainCamera.ScreenToWorldPoint(_mousePosition);
 				_reticlePosition.z = ReticleZPosition;
 				_reticle.transform.position = _reticlePosition;
 			}
@@ -542,7 +542,7 @@ namespace MoreMountains.CorgiEngine
 			{
 				return;
 			}
-			
+
 			_additionalAngle += addedAngle;
 		}
 

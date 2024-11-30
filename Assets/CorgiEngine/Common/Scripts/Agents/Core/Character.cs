@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System;
 
 namespace MoreMountains.CorgiEngine
-{	
+{
 	[SelectionBase]
 	/// <summary>
 	/// This class will pilot the CorgiController component of your character.
@@ -16,9 +16,9 @@ namespace MoreMountains.CorgiEngine
 	/// RandomConstant : a random int (between 0 and 1000), generated at Start and that'll remain constant for the entire lifetime of this animator, useful to have different characters of the same type 
 	/// behave differently
 	/// </summary>
-	[AddComponentMenu("Corgi Engine/Character/Core/Character")] 
+	[AddComponentMenu("Corgi Engine/Character/Core/Character")]
 	public class Character : CorgiMonoBehaviour
-	{		
+	{
 		/// the possible character types : player controller or AI (controlled by the computer)
 		public enum CharacterTypes { Player, AI }
 		/// the possible initial facing direction for your character
@@ -26,34 +26,34 @@ namespace MoreMountains.CorgiEngine
 		/// the possible directions you can force your character to look at after its spawn
 		public enum SpawnFacingDirections { Default, Left, Right }
 
-		[MMInformation("The Character script is the mandatory basis for all Character abilities. Your character can either be a Non Player Character, controlled by an AI, or a Player character, controlled by the player. In this case, you'll need to specify a PlayerID, which must match the one specified in your InputManager. Usually 'Player1', 'Player2', etc.",MoreMountains.Tools.MMInformationAttribute.InformationType.Info,false)]
+		[MMInformation("The Character script is the mandatory basis for all Character abilities. Your character can either be a Non Player Character, controlled by an AI, or a Player character, controlled by the player. In this case, you'll need to specify a PlayerID, which must match the one specified in your InputManager. Usually 'Player1', 'Player2', etc.", MoreMountains.Tools.MMInformationAttribute.InformationType.Info, false)]
 
 		/// Is the character player-controlled or controlled by an AI ?
 		[Tooltip("Is the character player-controlled or controlled by an AI ?")]
 		public CharacterTypes CharacterType = CharacterTypes.AI;
 		/// Only used if the character is player-controlled. The PlayerID must match an input manager's PlayerID. It's also used to match Unity's input settings. So you'll be safe if you keep to Player1, Player2, Player3 or Player4
 		[Tooltip("Only used if the character is player-controlled. The PlayerID must match an input manager's PlayerID. It's also used to match Unity's input settings. So you'll be safe if you keep to Player1, Player2, Player3 or Player4")]
-		public string PlayerID = "";				
+		public string PlayerID = "";
 		/// the various states of the character
 		public CharacterStates CharacterState { get; protected set; }
-	
+
 		[Header("Direction")]
-		[MMInformation("It's usually good practice to build all your characters facing right. If that's not the case of this character, select Left instead.",MoreMountains.Tools.MMInformationAttribute.InformationType.Info,false)]
+		[MMInformation("It's usually good practice to build all your characters facing right. If that's not the case of this character, select Left instead.", MoreMountains.Tools.MMInformationAttribute.InformationType.Info, false)]
 
 		/// true if the player is facing right
 		[Tooltip("true if the player is facing right")]
 		public FacingDirections InitialFacingDirection = FacingDirections.Right;
 
-		[MMInformation("Here you can force a direction the character should face when spawning. If set to default, it'll match your model's initial facing direction.",MoreMountains.Tools.MMInformationAttribute.InformationType.Info,false)]
+		[MMInformation("Here you can force a direction the character should face when spawning. If set to default, it'll match your model's initial facing direction.", MoreMountains.Tools.MMInformationAttribute.InformationType.Info, false)]
 
 		/// the direction the character will face on spawn
 		[Tooltip("the direction the character will face on spawn")]
 		public SpawnFacingDirections DirectionOnSpawn = SpawnFacingDirections.Default;
 		/// if this is true, the character is currently facing right
 		public bool IsFacingRight { get; set; }
-	
+
 		[Header("Animator")]
-		[MMInformation("The engine will try and find an animator for this character. If it's on the same gameobject it should have found it. If it's nested somewhere, you'll need to bind it below. You can also decide to get rid of it altogether, in that case, just uncheck 'use mecanim'.",MoreMountains.Tools.MMInformationAttribute.InformationType.Info,false)]
+		[MMInformation("The engine will try and find an animator for this character. If it's on the same gameobject it should have found it. If it's nested somewhere, you'll need to bind it below. You can also decide to get rid of it altogether, in that case, just uncheck 'use mecanim'.", MoreMountains.Tools.MMInformationAttribute.InformationType.Info, false)]
 
 		/// the character animator
 		[Tooltip("the character animator")]
@@ -67,9 +67,9 @@ namespace MoreMountains.CorgiEngine
 		/// if this is true, animator logs for the associated animator will be turned off to avoid potential spam
 		[Tooltip("if this is true, animator logs for the associated animator will be turned off to avoid potential spam")]
 		public bool DisableAnimatorLogs = false;
-        
+
 		[Header("Model")]
-		[MMInformation("Leave this unbound if this is a regular, sprite-based character, and if the SpriteRenderer and the Character are on the same GameObject. If not, you'll want to parent the actual model to the Character object, and bind it below. See the 3D demo characters for an example of that. The idea behind that is that the model may move, flip, but the collider will remain unchanged.",MoreMountains.Tools.MMInformationAttribute.InformationType.Info,false)]
+		[MMInformation("Leave this unbound if this is a regular, sprite-based character, and if the SpriteRenderer and the Character are on the same GameObject. If not, you'll want to parent the actual model to the Character object, and bind it below. See the 3D demo characters for an example of that. The idea behind that is that the model may move, flip, but the collider will remain unchanged.", MoreMountains.Tools.MMInformationAttribute.InformationType.Info, false)]
 
 		/// the 'model' (can be any gameobject) used to manipulate the character. Ideally it's separated (and nested) from the collider/corgi controller/abilities, to avoid messing with collisions.
 		[Tooltip("the 'model' (can be any gameobject) used to manipulate the character. Ideally it's separated (and nested) from the collider/corgi controller/abilities, to avoid messing with collisions.")]
@@ -86,7 +86,7 @@ namespace MoreMountains.CorgiEngine
 		[Tooltip("A list of gameobjects (usually nested under the Character) under which to search for additional abilities")]
 		public List<GameObject> AdditionalAbilityNodes;
 
-		[MMInformation("You can also decide if the character must automatically flip when going backwards or not. Additionnally, if you're not using sprites, you can define here how the character's model's localscale will be affected by flipping. By default it flips on the x axis, but you can change that to fit your model.",MoreMountains.Tools.MMInformationAttribute.InformationType.Info,false)]
+		[MMInformation("You can also decide if the character must automatically flip when going backwards or not. Additionnally, if you're not using sprites, you can define here how the character's model's localscale will be affected by flipping. By default it flips on the x axis, but you can change that to fit your model.", MoreMountains.Tools.MMInformationAttribute.InformationType.Info, false)]
 
 		/// whether we should flip the model's scale when the character changes direction or not
 		[Tooltip("whether we should flip the model's scale when the character changes direction or not")]
@@ -94,14 +94,14 @@ namespace MoreMountains.CorgiEngine
 		/// the FlipValue will be used to multiply the model's transform's localscale on flip. Usually it's -1,1,1, but feel free to change it to suit your model's specs
 		[MMCondition("FlipModelOnDirectionChange", true)]
 		[Tooltip("the FlipValue will be used to multiply the model's transform's localscale on flip. Usually it's -1,1,1, but feel free to change it to suit your model's specs")]
-		public Vector3 ModelFlipValue = new Vector3(-1,1,1);
+		public Vector3 ModelFlipValue = new Vector3(-1, 1, 1);
 		/// whether we should rotate the model on direction change or not
 		[Tooltip("whether we should rotate the model on direction change or not")]
 		public bool RotateModelOnDirectionChange;
 		/// the rotation to apply to the model when it changes direction
 		[MMCondition("RotateModelOnDirectionChange", true)]
 		[Tooltip("the rotation to apply to the model when it changes direction")]
-		public Vector3 ModelRotationValue = new Vector3(0f,180f,0f);
+		public Vector3 ModelRotationValue = new Vector3(0f, 180f, 0f);
 		/// the speed at which to rotate the model when changing direction, 0f means instant rotation
 		[MMCondition("RotateModelOnDirectionChange", true)]
 		[Tooltip("the speed at which to rotate the model when changing direction, 0f means instant rotation")]
@@ -111,9 +111,9 @@ namespace MoreMountains.CorgiEngine
 		/// the Health script associated to this Character, will be grabbed automatically if left empty
 		[Tooltip("the Health script associated to this Character, will be grabbed automatically if left empty")]
 		public Health CharacterHealth;
-		
+
 		[Header("Events")]
-		[MMInformation("Here you can define whether or not you want to have that character trigger events when changing state. See the MMTools' State Machine doc for more info.",MoreMountains.Tools.MMInformationAttribute.InformationType.Info,false)]
+		[MMInformation("Here you can define whether or not you want to have that character trigger events when changing state. See the MMTools' State Machine doc for more info.", MoreMountains.Tools.MMInformationAttribute.InformationType.Info, false)]
 
 		/// If this is true, the Character's state machine will emit events when entering/exiting a state
 		[Tooltip("If this is true, the Character's state machine will emit events when entering/exiting a state")]
@@ -199,8 +199,8 @@ namespace MoreMountains.CorgiEngine
 		protected CorgiController _controller;
 		protected SpriteRenderer _spriteRenderer;
 		protected Color _initialColor;
-		protected CharacterAbility[] _characterAbilities; 
-		protected float _originalGravity;		
+		protected CharacterAbility[] _characterAbilities;
+		protected float _originalGravity;
 		protected bool _spawnDirectionForced = false;
 		protected Vector3 _targetModelRotation;
 		protected DamageOnTouch _damageOnTouch;
@@ -216,7 +216,7 @@ namespace MoreMountains.CorgiEngine
 		/// Initializes this instance of the character
 		/// </summary>
 		protected virtual void Awake()
-		{		
+		{
 			Initialization();
 		}
 
@@ -261,7 +261,7 @@ namespace MoreMountains.CorgiEngine
 			CacheAbilitiesAtInit();
 			if (CharacterBrain == null)
 			{
-				CharacterBrain = this.gameObject.GetComponent<AIBrain>(); 
+				CharacterBrain = this.gameObject.GetComponent<AIBrain>();
 			}
 			if (CharacterBrain != null)
 			{
@@ -269,15 +269,15 @@ namespace MoreMountains.CorgiEngine
 			}
 			if (CharacterHealth == null)
 			{
-				CharacterHealth = this.gameObject.GetComponent<Health> ();    
+				CharacterHealth = this.gameObject.GetComponent<Health>();
 			}
 			_damageOnTouch = this.gameObject.GetComponent<DamageOnTouch>();
 			CanFlip = true;
-			AssignAnimator();           
+			AssignAnimator();
 
-			_originalGravity = _controller.Parameters.Gravity;		
+			_originalGravity = _controller.Parameters.Gravity;
 
-			ForceSpawnDirection ();
+			ForceSpawnDirection();
 		}
 
 		/// <summary>
@@ -288,7 +288,7 @@ namespace MoreMountains.CorgiEngine
 			if (Camera.main != null)
 			{
 				SceneCamera = Camera.main.GetComponent<CameraController>();
-			}		
+			}
 		}
 
 		/// <summary>
@@ -331,7 +331,7 @@ namespace MoreMountains.CorgiEngine
 				for (int j = 0; j < AdditionalAbilityNodes.Count; j++)
 				{
 					CharacterAbility[] tempArray = AdditionalAbilityNodes[j].GetComponentsInChildren<CharacterAbility>();
-					foreach(CharacterAbility ability in tempArray)
+					foreach (CharacterAbility ability in tempArray)
 					{
 						tempAbilityList.Add(ability);
 					}
@@ -347,12 +347,12 @@ namespace MoreMountains.CorgiEngine
 		/// </summary>
 		/// <typeparam name="T"></typeparam>
 		/// <returns></returns>
-		public T FindAbility<T>() where T:CharacterAbility
+		public T FindAbility<T>() where T : CharacterAbility
 		{
 			CacheAbilitiesAtInit();
 
 			Type searchedAbilityType = typeof(T);
-            
+
 			foreach (CharacterAbility ability in _characterAbilities)
 			{
 				if (ability is T characterAbility)
@@ -369,13 +369,13 @@ namespace MoreMountains.CorgiEngine
 		/// </summary>
 		/// <typeparam name="T"></typeparam>
 		/// <returns></returns>
-		public List<T> FindAbilities<T>() where T:CharacterAbility
+		public List<T> FindAbilities<T>() where T : CharacterAbility
 		{
 			CacheAbilitiesAtInit();
 
 			List<T> resultList = new List<T>();
 			Type searchedAbilityType = typeof(T);
-            
+
 			foreach (CharacterAbility ability in _characterAbilities)
 			{
 				if (ability is T characterAbility)
@@ -428,7 +428,7 @@ namespace MoreMountains.CorgiEngine
 				}
 			}
 		}
-        
+
 		/// <summary>
 		/// Gets (if it exists) the InputManager matching the Character's Player ID
 		/// </summary>
@@ -442,11 +442,11 @@ namespace MoreMountains.CorgiEngine
 			}
 
 			// we get the corresponding input manager
-			if (!string.IsNullOrEmpty (PlayerID))
+			if (!string.IsNullOrEmpty(PlayerID))
 			{
 				LinkedInputManager = null;
 				InputManager[] foundInputManagers = FindObjectsOfType(typeof(InputManager)) as InputManager[];
-				foreach (InputManager foundInputManager in foundInputManagers) 
+				foreach (InputManager foundInputManager in foundInputManagers)
 				{
 					if (foundInputManager.PlayerID == PlayerID)
 					{
@@ -476,12 +476,12 @@ namespace MoreMountains.CorgiEngine
 			{
 				return;
 			}
-			for (int i=0; i<_characterAbilities.Length; i++)
+			for (int i = 0; i < _characterAbilities.Length; i++)
 			{
 				_characterAbilities[i].SetInputManager(LinkedInputManager);
-			}            
+			}
 		}
-                
+
 		/// <summary>
 		/// Resets the input for all abilities
 		/// </summary>
@@ -506,13 +506,13 @@ namespace MoreMountains.CorgiEngine
 			PlayerID = newPlayerID;
 			SetInputManager();
 		}
-		
+
 		/// <summary>
 		/// This is called every frame.
 		/// </summary>
 		protected virtual void Update()
-		{		
-			EveryFrame();				
+		{
+			EveryFrame();
 		}
 
 		/// <summary>
@@ -533,8 +533,8 @@ namespace MoreMountains.CorgiEngine
 			}
 
 			// we send our various states to the animator.		 
-			UpdateAnimators ();
-			RotateModel();	
+			UpdateAnimators();
+			RotateModel();
 		}
 
 		protected virtual void RotateModel()
@@ -543,7 +543,7 @@ namespace MoreMountains.CorgiEngine
 			{
 				return;
 			}
-            
+
 			if (ModelRotationSpeed > 0f)
 			{
 				CharacterModel.transform.localEulerAngles = Vector3.Lerp(CharacterModel.transform.localEulerAngles, _targetModelRotation, Time.deltaTime * ModelRotationSpeed);
@@ -640,7 +640,7 @@ namespace MoreMountains.CorgiEngine
 				MMAnimatorExtensions.UpdateAnimatorBool(_animator, _groundedAnimationParameter, _controller.State.IsGrounded, _animatorParameters, PerformAnimatorSanityChecks);
 				MMAnimatorExtensions.UpdateAnimatorBool(_animator, _fallingAnimationParameter, MovementState.CurrentState == CharacterStates.MovementStates.Falling, _animatorParameters, PerformAnimatorSanityChecks);
 				MMAnimatorExtensions.UpdateAnimatorBool(_animator, _airborneSpeedAnimationParameter, Airborne, _animatorParameters, PerformAnimatorSanityChecks);
-				MMAnimatorExtensions.UpdateAnimatorBool(_animator, _aliveAnimationParameter, (ConditionState.CurrentState != CharacterStates.CharacterConditions.Dead),_animatorParameters, PerformAnimatorSanityChecks);
+				MMAnimatorExtensions.UpdateAnimatorBool(_animator, _aliveAnimationParameter, (ConditionState.CurrentState != CharacterStates.CharacterConditions.Dead), _animatorParameters, PerformAnimatorSanityChecks);
 				MMAnimatorExtensions.UpdateAnimatorFloat(_animator, _xSpeedAnimationParameter, _controller.Speed.x, _animatorParameters, PerformAnimatorSanityChecks);
 				MMAnimatorExtensions.UpdateAnimatorFloat(_animator, _ySpeedAnimationParameter, _controller.Speed.y, _animatorParameters, PerformAnimatorSanityChecks);
 				MMAnimatorExtensions.UpdateAnimatorFloat(_animator, _xSpeedAbsoluteAnimationParameter, Mathf.Abs(_controller.Speed.x), _animatorParameters, PerformAnimatorSanityChecks);
@@ -660,7 +660,7 @@ namespace MoreMountains.CorgiEngine
 				foreach (CharacterAbility ability in _characterAbilities)
 				{
 					if (ability.enabled && ability.AbilityInitialized)
-					{	
+					{
 						ability.UpdateAnimator();
 					}
 				}
@@ -706,7 +706,7 @@ namespace MoreMountains.CorgiEngine
 			if (ConditionState.CurrentState == CharacterStates.CharacterConditions.Frozen)
 			{
 				_controller.GravityActive(false);
-				_controller.SetForce(Vector2.zero);			
+				_controller.SetForce(Vector2.zero);
 			}
 		}
 
@@ -719,7 +719,7 @@ namespace MoreMountains.CorgiEngine
 			_controller.SetForce(Vector2.zero);
 			if (ConditionState.CurrentState != CharacterStates.CharacterConditions.Frozen)
 			{
-				_conditionStateBeforeFreeze = ConditionState.CurrentState;	
+				_conditionStateBeforeFreeze = ConditionState.CurrentState;
 			}
 			ConditionState.ChangeState(CharacterStates.CharacterConditions.Frozen);
 		}
@@ -733,8 +733,8 @@ namespace MoreMountains.CorgiEngine
 		{
 			_controller.GravityActive(true);
 			ConditionState.ChangeState(_conditionStateBeforeFreeze);
-		}	    
-		
+		}
+
 		/// <summary>
 		/// Use this method to force the controller to recalculate the rays, especially useful when the size of the character has changed.
 		/// </summary>
@@ -751,9 +751,9 @@ namespace MoreMountains.CorgiEngine
 		{
 			enabled = false;
 			_controller.enabled = false;
-			this.gameObject.MMGetComponentNoAlloc<Collider2D>().enabled = false;		
+			this.gameObject.MMGetComponentNoAlloc<Collider2D>().enabled = false;
 		}
-		
+
 		/// <summary>
 		/// Makes the player respawn at the location passed in parameters
 		/// </summary>
@@ -777,11 +777,11 @@ namespace MoreMountains.CorgiEngine
 			this.gameObject.MMGetComponentNoAlloc<Collider2D>().enabled = true;
 			// we make it handle collisions again
 			_controller.CollisionsOn();
-			
-			
+
+
 			transform.position = spawnPoint.position;
 			Physics2D.SyncTransforms();
-			
+
 			if (CharacterHealth != null)
 			{
 				if (_characterPersistence != null)
@@ -795,12 +795,12 @@ namespace MoreMountains.CorgiEngine
 						return;
 					}
 				}
-				
+
 				CharacterHealth.ResetHealthToMaxHealth();
-				CharacterHealth.Revive ();
+				CharacterHealth.Revive();
 			}
 		}
-		
+
 		/// <summary>
 		/// Flips the character and its dependencies (jetpack for example) horizontally
 		/// </summary>
@@ -838,7 +838,7 @@ namespace MoreMountains.CorgiEngine
 
 			if (_animator != null)
 			{
-				MMAnimatorExtensions.SetAnimatorTrigger(_animator, _flipAnimationParameter, _animatorParameters, PerformAnimatorSanityChecks);    
+				MMAnimatorExtensions.SetAnimatorTrigger(_animator, _flipAnimationParameter, _animatorParameters, PerformAnimatorSanityChecks);
 			}
 
 			IsFacingRight = !IsFacingRight;
@@ -899,11 +899,11 @@ namespace MoreMountains.CorgiEngine
 				_spawnDirectionForced = true;
 				if (DirectionOnSpawn == SpawnFacingDirections.Left)
 				{
-					Face (FacingDirections.Left);
+					Face(FacingDirections.Left);
 				}
 				if (DirectionOnSpawn == SpawnFacingDirections.Right)
 				{
-					Face (FacingDirections.Right);					
+					Face(FacingDirections.Right);
 				}
 			}
 		}
@@ -935,7 +935,7 @@ namespace MoreMountains.CorgiEngine
 				}
 			}
 		}
-		
+
 		/// <summary>
 		/// Use this method to change the character's condition for a specified duration, and resetting it afterwards.
 		/// You can also use this to disable gravity for a while, and optionally reset forces too.
@@ -968,7 +968,7 @@ namespace MoreMountains.CorgiEngine
 		{
 			if (this.ConditionState.CurrentState != newCondition)
 			{
-				_lastState = this.ConditionState.CurrentState;	
+				_lastState = this.ConditionState.CurrentState;
 			}
 			this.ConditionState.ChangeState(newCondition);
 			if (resetControllerForces) { _controller?.SetForce(Vector2.zero); }
@@ -994,7 +994,7 @@ namespace MoreMountains.CorgiEngine
 		{
 			_cameraOffset = offset;
 		}
-        
+
 		/// <summary>
 		/// Called when the Character dies. 
 		/// Calls every abilities' Reset() method, so you can restore settings to their original value if needed
@@ -1024,7 +1024,7 @@ namespace MoreMountains.CorgiEngine
 		/// </summary>
 		protected virtual void OnRevive()
 		{
-			ForceSpawnDirection ();
+			ForceSpawnDirection();
 			if (CharacterBrain != null)
 			{
 				CharacterBrain.enabled = true;
@@ -1054,7 +1054,7 @@ namespace MoreMountains.CorgiEngine
 		/// <summary>
 		/// OnEnable, we register our OnRevive event
 		/// </summary>
-		protected virtual void OnEnable ()
+		protected virtual void OnEnable()
 		{
 			if (CharacterHealth != null)
 			{
@@ -1072,7 +1072,7 @@ namespace MoreMountains.CorgiEngine
 			{
 				//_health.OnRevive -= OnRevive;
 				CharacterHealth.OnDeath -= OnDeath;
-			}			
+			}
 		}
 	}
 }

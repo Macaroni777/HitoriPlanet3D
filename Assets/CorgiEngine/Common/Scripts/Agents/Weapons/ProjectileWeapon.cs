@@ -8,7 +8,7 @@ namespace MoreMountains.CorgiEngine
 	/// <summary>
 	/// A weapon class aimed specifically at allowing the creation of various projectile weapons, from shotgun to machine gun, via plasma gun or rocket launcher
 	/// </summary>
-	[MMHiddenProperties("WeaponOnMissFeedback","ApplyRecoilOnHitDamageable","ApplyRecoilOnHitNonDamageable","ApplyRecoilOnHitNothing","ApplyRecoilOnKill")]
+	[MMHiddenProperties("WeaponOnMissFeedback", "ApplyRecoilOnHitDamageable", "ApplyRecoilOnHitNonDamageable", "ApplyRecoilOnHitNothing", "ApplyRecoilOnKill")]
 	[AddComponentMenu("Corgi Engine/Weapons/Projectile Weapon")]
 	public class ProjectileWeapon : Weapon
 	{
@@ -39,9 +39,9 @@ namespace MoreMountains.CorgiEngine
 		[MMReadOnly]
 		[Tooltip("the local position at which this projectile weapon should spawn projectiles")]
 		public Vector3 SpawnPosition = Vector3.zero;
-		
+
 		public bool WallClinging { get; set; }
-		
+
 		protected Vector3 _flippedProjectileSpawnOffset;
 		protected Vector3 _randomSpreadDirection;
 		protected Vector3 _spawnPositionCenter;
@@ -53,14 +53,15 @@ namespace MoreMountains.CorgiEngine
 		/// </summary>
 		public override void Initialization()
 		{
+			toggleShot = false;
 			base.Initialization();
-			_aimableWeapon = GetComponent<WeaponAim> ();
+			_aimableWeapon = GetComponent<WeaponAim>();
 
 			if (!_poolInitialized)
 			{
 				if (ObjectPooler == null)
 				{
-					ObjectPooler = GetComponent<MMObjectPooler>();	
+					ObjectPooler = GetComponent<MMObjectPooler>();
 				}
 				if (ObjectPooler == null)
 				{
@@ -71,11 +72,16 @@ namespace MoreMountains.CorgiEngine
 				_flippedProjectileSpawnOffset = ProjectileSpawnOffset;
 				_flippedProjectileSpawnOffset.y = -_flippedProjectileSpawnOffset.y;
 				_poolInitialized = true;
-			}            
+			}
 		}
 
 		protected override void LateUpdate()
 		{
+			if (Input.GetMouseButtonDown(0)) // 左クリック
+			{
+				toggleShot = !toggleShot; // 状態を切り替え
+				Debug.Log(toggleShot);
+			}
 			base.LateUpdate();
 			WallClinging = false;
 		}
@@ -85,14 +91,15 @@ namespace MoreMountains.CorgiEngine
 		/// </summary>
 		protected override void WeaponUse()
 		{
-			base.WeaponUse ();
+			base.WeaponUse();
 
-			DetermineSpawnPosition ();
-            			
+			DetermineSpawnPosition();
+
 			for (int i = 0; i < ProjectilesPerShot; i++)
 			{
 				SpawnProjectile(SpawnPosition, i, ProjectilesPerShot, true);
-			}			
+
+			}
 		}
 
 		/// <summary>
@@ -104,23 +111,23 @@ namespace MoreMountains.CorgiEngine
 			GameObject nextGameObject = ObjectPooler.GetPooledGameObject();
 
 			// mandatory checks
-			if (nextGameObject==null)	{ return null; }
-			if (nextGameObject.GetComponent<MMPoolableObject>()==null)
+			if (nextGameObject == null) { return null; }
+			if (nextGameObject.GetComponent<MMPoolableObject>() == null)
 			{
-				throw new Exception(gameObject.name+" is trying to spawn objects that don't have a PoolableObject component.");		
-			}	
+				throw new Exception(gameObject.name + " is trying to spawn objects that don't have a PoolableObject component.");
+			}
 			// we position the object
 			nextGameObject.transform.position = spawnPosition;
 			// we set its direction
 
 			Projectile projectile = nextGameObject.GetComponent<Projectile>();
 			if (projectile != null)
-			{				
+			{
 				projectile.SetWeapon(this);
 				if (Owner != null)
 				{
 					projectile.SetOwner(Owner.gameObject);
-				}				
+				}
 			}
 			// we activate the object
 			nextGameObject.gameObject.SetActive(true);
@@ -146,7 +153,7 @@ namespace MoreMountains.CorgiEngine
 					{
 						_randomSpreadDirection = Vector3.zero;
 					}
-				}               
+				}
 
 				Quaternion spread = Quaternion.Euler(_randomSpreadDirection);
 				bool facingRight = (Owner == null) || Owner.IsFacingRight;
@@ -159,7 +166,7 @@ namespace MoreMountains.CorgiEngine
 
 			if (triggerObjectActivation)
 			{
-				if (nextGameObject.GetComponent<MMPoolableObject>()!=null)
+				if (nextGameObject.GetComponent<MMPoolableObject>() != null)
 				{
 					nextGameObject.GetComponent<MMPoolableObject>().TriggerOnSpawnComplete();
 				}
@@ -167,7 +174,7 @@ namespace MoreMountains.CorgiEngine
 
 			return (nextGameObject);
 		}
-		
+
 		/// <summary>
 		/// Determines the spawn position based on the spawn offset and whether or not the weapon is flipped
 		/// </summary>
@@ -196,10 +203,10 @@ namespace MoreMountains.CorgiEngine
 		/// </summary>
 		protected virtual void OnDrawGizmosSelected()
 		{
-			DetermineSpawnPosition ();
+			DetermineSpawnPosition();
 
 			Gizmos.color = Color.white;
-			Gizmos.DrawWireSphere(SpawnPosition, 0.2f);	
+			Gizmos.DrawWireSphere(SpawnPosition, 0.2f);
 		}
 	}
 }

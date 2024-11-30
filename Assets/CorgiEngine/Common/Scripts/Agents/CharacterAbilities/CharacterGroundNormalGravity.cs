@@ -22,11 +22,11 @@ namespace MoreMountains.CorgiEngine
 		/// if this is true, slope angle will only be detected if grounded 
 		[Tooltip("if this is true, slope angle will only be detected if grounded")]
 		public bool OnlyWhenGrounded = false;
-        
+
 		protected RaycastHit2D _raycastCenter;
 		protected RaycastHit2D _raycastLeft;
 		protected RaycastHit2D _raycastRight;
-    
+
 		/// <summary>
 		/// On ProcessAbility, we cast a ray downwards, compute its angle, and apply it to the gravity ability
 		/// </summary>
@@ -44,9 +44,9 @@ namespace MoreMountains.CorgiEngine
 				return;
 			}
 
-			_raycastCenter = MMDebug.RayCast (_controller.BoundsCenter,-_controller.transform.up, DownwardsRaycastLength, _controller.PlatformMask, Color.blue, _controller.Parameters.DrawRaycastsGizmos);
-			_raycastLeft = MMDebug.RayCast (_controller.BoundsBottomLeftCorner,-_controller.transform.up, DownwardsRaycastLength, _controller.PlatformMask, Color.blue, _controller.Parameters.DrawRaycastsGizmos);
-			_raycastRight = MMDebug.RayCast (_controller.BoundsBottomRightCorner,-_controller.transform.up, DownwardsRaycastLength, _controller.PlatformMask, Color.blue, _controller.Parameters.DrawRaycastsGizmos);
+			_raycastCenter = MMDebug.RayCast(_controller.BoundsCenter, -_controller.transform.up, DownwardsRaycastLength, _controller.PlatformMask, Color.blue, _controller.Parameters.DrawRaycastsGizmos);
+			_raycastLeft = MMDebug.RayCast(_controller.BoundsBottomLeftCorner, -_controller.transform.up, DownwardsRaycastLength, _controller.PlatformMask, Color.blue, _controller.Parameters.DrawRaycastsGizmos);
+			_raycastRight = MMDebug.RayCast(_controller.BoundsBottomRightCorner, -_controller.transform.up, DownwardsRaycastLength, _controller.PlatformMask, Color.blue, _controller.Parameters.DrawRaycastsGizmos);
 
 			if (_raycastCenter)
 			{
@@ -56,7 +56,7 @@ namespace MoreMountains.CorgiEngine
 
 				if (angleLeft == angleRight)
 				{
-					_characterGravity.SetGravityAngle(angleCenter);    
+					_characterGravity.SetGravityAngle(angleCenter);
 				}
 			}
 		}

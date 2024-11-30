@@ -6,7 +6,7 @@ using MoreMountains.Tools;
 using UnityEngine.Serialization;
 
 namespace MoreMountains.CorgiEngine
-{	
+{
 	[RequireComponent(typeof(BoxCollider2D))]
 
 	// DISCLAIMER : this controller's been built from the ground up for the Corgi Engine. It takes clues and inspirations from various methods and articles freely 
@@ -17,12 +17,12 @@ namespace MoreMountains.CorgiEngine
 	/// The character controller that handles the character's gravity and collisions.
 	/// It requires a Collider2D and a rigidbody to function.
 	/// </summary>
-	[AddComponentMenu("Corgi Engine/Character/Core/Corgi Controller")] 
-	public class CorgiController : CorgiMonoBehaviour 
+	[AddComponentMenu("Corgi Engine/Character/Core/Corgi Controller")]
+	public class CorgiController : CorgiMonoBehaviour
 	{
 		/// the possible modes this controller can update on
-		public enum UpdateModes {Update, FixedUpdate}
-		
+		public enum UpdateModes { Update, FixedUpdate }
+
 		/// the various states of our character
 		public CorgiControllerState State { get; protected set; }
 
@@ -32,17 +32,17 @@ namespace MoreMountains.CorgiEngine
 		[Tooltip("the initial parameters")]
 		public CorgiControllerParameters DefaultParameters;
 		/// the current parameters
-		public CorgiControllerParameters Parameters{get{return _overrideParameters ?? DefaultParameters;}}
-        
+		public CorgiControllerParameters Parameters { get { return _overrideParameters ?? DefaultParameters; } }
+
 		[Header("Collisions")]
-		[MMInformation("You need to define what layer(s) this character will consider a walkable platform/moving platform etc. By default, you want Platforms, MovingPlatforms, OneWayPlatforms, MovingOneWayPlatforms, in this order.",MoreMountains.Tools.MMInformationAttribute.InformationType.Info,false)]
+		[MMInformation("You need to define what layer(s) this character will consider a walkable platform/moving platform etc. By default, you want Platforms, MovingPlatforms, OneWayPlatforms, MovingOneWayPlatforms, in this order.", MoreMountains.Tools.MMInformationAttribute.InformationType.Info, false)]
 
 		/// The layer mask the platforms are on
 		[Tooltip("The layer mask the platforms are on")]
-		public LayerMask PlatformMask = LayerManager.PlatformsLayerMask | LayerManager.PushablesLayerMask; 
+		public LayerMask PlatformMask = LayerManager.PlatformsLayerMask | LayerManager.PushablesLayerMask;
 		/// The layer mask the moving platforms are on
 		[Tooltip("The layer mask the moving platforms are on")]
-		public LayerMask MovingPlatformMask = LayerManager.MovingPlatformsLayerMask; 
+		public LayerMask MovingPlatformMask = LayerManager.MovingPlatformsLayerMask;
 		/// The layer mask the one way platforms are on
 		[Tooltip("The layer mask the one way platforms are on")]
 		public LayerMask OneWayPlatformMask = LayerManager.OneWayPlatformsLayerMask;
@@ -73,11 +73,11 @@ namespace MoreMountains.CorgiEngine
 		/// the object the character was standing on last frame
 		public GameObject StandingOnLastFrame { get; protected set; }
 		/// gives you the collider the character is standing on
-		public Collider2D StandingOnCollider { get; protected set; }	
+		public Collider2D StandingOnCollider { get; protected set; }
 		/// gives you the collider the character is standing on
-		public GameObject LastStandingOn { get; protected set; }	
+		public GameObject LastStandingOn { get; protected set; }
 		/// the current speed of the character
-		public Vector2 Speed { get{ return _speed; } }
+		public Vector2 Speed { get { return _speed; } }
 		/// the world speed of the character
 		public virtual Vector2 WorldSpeed { get { return _worldSpeed; } }
 		/// the value of the forces applied at one point in time 
@@ -111,7 +111,7 @@ namespace MoreMountains.CorgiEngine
 		/// an extra length you an add when casting rays vertically
 		[Tooltip("an extra length you an add when casting rays vertically")]
 		public float RayExtraLengthVertical = 0f;
-		
+
 		/// by default, the length of the raycasts used to get back to normal size will be auto generated based on your character's normal/standing height, but here you can specify a different value
 		[Tooltip("by default, the length of the raycasts used to get back to normal size will be auto generated based on your character's normal/standing height, but here you can specify a different value")]
 		public float CrouchedRaycastLengthMultiplier = 1f;
@@ -127,9 +127,9 @@ namespace MoreMountains.CorgiEngine
 		/// an offset to apply vertically to the origin of the controller's raycasts that will have an impact on obstacle detection. Tweak this to adapt to your character's and obstacle's size.
 		[Tooltip("an offset to apply vertically to the origin of the controller's raycasts that will have an impact on obstacle detection. Tweak this to adapt to your character's and obstacle's size")]
 		public float ObstacleHeightTolerance = 0.05f;
-		
+
 		[Header("Stickiness")]
-		[MMInformation("Here you can define whether or not you want your character stick to slopes when walking down them, and how long the raycast handling that should be (0 means automatic length).",MoreMountains.Tools.MMInformationAttribute.InformationType.Info,false)]
+		[MMInformation("Here you can define whether or not you want your character stick to slopes when walking down them, and how long the raycast handling that should be (0 means automatic length).", MoreMountains.Tools.MMInformationAttribute.InformationType.Info, false)]
 
 		/// If this is set to true, the character will stick to slopes when walking down them
 		[Tooltip("If this is set to true, the character will stick to slopes when walking down them")]
@@ -145,9 +145,9 @@ namespace MoreMountains.CorgiEngine
 		[MMReadOnly]
 		public float TimeAirborne = 0f;
 
-		
+
 		[Header("Safety")]
-		[MMInformation("Here you can authorize your controller to start rotated. This will change its gravity direction. It's safer to leave this safety on and use a CharacterGravity ability instead.",MoreMountains.Tools.MMInformationAttribute.InformationType.Info,false)]
+		[MMInformation("Here you can authorize your controller to start rotated. This will change its gravity direction. It's safer to leave this safety on and use a CharacterGravity ability instead.", MoreMountains.Tools.MMInformationAttribute.InformationType.Info, false)]
 
 		/// whether or not to perform additional checks when setting the transform's position (typically done by abilities like CharacterGrip). Slightly more expensive in terms of performance, but also safer. 
 		[Tooltip("whether or not to perform additional checks when setting the transform's position (typically done by abilities like CharacterGrip). Slightly more expensive in terms of performance, but also safer. ")]
@@ -155,18 +155,18 @@ namespace MoreMountains.CorgiEngine
 		/// if this is true, this controller will set a number of physics settings automatically on init, to ensure they're correct
 		[Tooltip("if this is true, this controller will set a number of physics settings automatically on init, to ensure they're correct")]
 		public bool AutomaticallySetPhysicsSettings = true;
-		
+
 		/// if this is true, gravity ability settings will be automatically set. It's recommended to set that to true.
 		[Tooltip("if this is true, gravity ability settings will be automatically set. It's recommended to set that to true.")]
 		public bool AutomaticGravitySettings = true;
-		
-		
+
+
 		/// if this is true, the controller will perform an extra boxcast before authorizing movement, from the previous place to the next.
 		/// If an obstacle is found between the two, movement will be prevented, and extraction will be attempted
 		/// In most contexts this can remain false, but if you experience characters going through platforms, turn it on 
 		[Tooltip("if this is true, the controller will perform an extra boxcast before authorizing movement, from the previous place to the next. " +
-		         "If an obstacle is found between the two, movement will be prevented, and extraction will be attempted. " +
-		         "In most contexts this can remain false, but if you experience characters going through platforms, turn it on")]
+				 "If an obstacle is found between the two, movement will be prevented, and extraction will be attempted. " +
+				 "In most contexts this can remain false, but if you experience characters going through platforms, turn it on")]
 		public bool PerformSafetyBoxcast = false;
 		/// whether or not to only perform the safety boxcast check in the air
 		[Tooltip("whether or not to only perform the safety boxcast check in the air")]
@@ -179,7 +179,7 @@ namespace MoreMountains.CorgiEngine
 		/// if an obstacle is found, extraction will be attempted, and the controller will move back along its last movement line, trying to find a safe space to put the character.
 		/// This defines the distance of each of these moves. Keep it small, and consistent with your character's size and speed
 		[Tooltip("if an obstacle is found, extraction will be attempted, and the controller will move back along its last movement line, trying to find a safe space to put the character. " +
-		         "This defines the distance of each of these moves. Keep it small, and consistent with your character's size and speed")]
+				 "This defines the distance of each of these moves. Keep it small, and consistent with your character's size and speed")]
 		[MMCondition("PerformSafetyBoxcast", true)]
 		public float ExtractionIncrement = 0.05f;
 		/// The amount of times the controller should try to extract from a potential non safe space
@@ -191,42 +191,54 @@ namespace MoreMountains.CorgiEngine
 		public Vector2 ColliderOffset => _boxCollider.offset;
 		public Vector3 ColliderCenterPosition => _boxCollider.bounds.center;
 
-		public virtual Vector3 ColliderBottomPosition { get
+		public virtual Vector3 ColliderBottomPosition
 		{
-			_colliderBottomCenterPosition.x = _boxCollider.bounds.center.x;
-			_colliderBottomCenterPosition.y = _boxCollider.bounds.min.y;
-			_colliderBottomCenterPosition.z = 0;
-			return _colliderBottomCenterPosition;
-		}}
+			get
+			{
+				_colliderBottomCenterPosition.x = _boxCollider.bounds.center.x;
+				_colliderBottomCenterPosition.y = _boxCollider.bounds.min.y;
+				_colliderBottomCenterPosition.z = 0;
+				return _colliderBottomCenterPosition;
+			}
+		}
 
-		public virtual Vector3 ColliderLeftPosition { get
+		public virtual Vector3 ColliderLeftPosition
 		{
-			_colliderLeftCenterPosition.x = _boxCollider.bounds.min.x;
-			_colliderLeftCenterPosition.y = _boxCollider.bounds.center.y;
-			_colliderLeftCenterPosition.z = 0;
-			return _colliderLeftCenterPosition;
-		}}
+			get
+			{
+				_colliderLeftCenterPosition.x = _boxCollider.bounds.min.x;
+				_colliderLeftCenterPosition.y = _boxCollider.bounds.center.y;
+				_colliderLeftCenterPosition.z = 0;
+				return _colliderLeftCenterPosition;
+			}
+		}
 
-		public virtual Vector3 ColliderTopPosition { get
+		public virtual Vector3 ColliderTopPosition
 		{
-			_colliderTopCenterPosition.x = _boxCollider.bounds.center.x;
-			_colliderTopCenterPosition.y = _boxCollider.bounds.max.y;
-			_colliderTopCenterPosition.z = 0;
-			return _colliderTopCenterPosition;
-		}}
+			get
+			{
+				_colliderTopCenterPosition.x = _boxCollider.bounds.center.x;
+				_colliderTopCenterPosition.y = _boxCollider.bounds.max.y;
+				_colliderTopCenterPosition.z = 0;
+				return _colliderTopCenterPosition;
+			}
+		}
 
-		public virtual Vector3 ColliderRightPosition { get
+		public virtual Vector3 ColliderRightPosition
 		{
-			_colliderRightCenterPosition.x = _boxCollider.bounds.max.x;
-			_colliderRightCenterPosition.y =  _boxCollider.bounds.center.y;
-			_colliderRightCenterPosition.z = 0;
-			return _colliderRightCenterPosition;
-		}}
-		
+			get
+			{
+				_colliderRightCenterPosition.x = _boxCollider.bounds.max.x;
+				_colliderRightCenterPosition.y = _boxCollider.bounds.center.y;
+				_colliderRightCenterPosition.z = 0;
+				return _colliderRightCenterPosition;
+			}
+		}
+
 		/// Is gravity active? 
-		public bool IsGravityActive => _gravityActive; 
-		public virtual float DeltaTime => _update ? Time.deltaTime : Time.fixedDeltaTime;  
-		public float Friction => _friction; 
+		public bool IsGravityActive => _gravityActive;
+		public virtual float DeltaTime => _update ? Time.deltaTime : Time.fixedDeltaTime;
+		public float Friction => _friction;
 		public SurfaceModifier CurrentSurfaceModifier { get; set; }
 		public GameObject[] StandingOnArray { get; set; }
 
@@ -246,78 +258,110 @@ namespace MoreMountains.CorgiEngine
 			return _boundsHeight;
 		}
 
-		public virtual Vector2 Bounds { get
+		public virtual Vector2 Bounds
+		{
+			get
 			{
 				_bounds.x = _boundsWidth;
 				_bounds.y = _boundsHeight;
 				return _bounds;
 			}
 		}
-        
-		public virtual Vector3 BoundsTopLeftCorner { get
-		{
-			return _boundsTopLeftCorner;
-		}}
 
-		public virtual Vector3 BoundsBottomLeftCorner { get
+		public virtual Vector3 BoundsTopLeftCorner
 		{
-			return _boundsBottomLeftCorner;
-		}}
+			get
+			{
+				return _boundsTopLeftCorner;
+			}
+		}
 
-		public virtual Vector3 BoundsTopRightCorner { get
+		public virtual Vector3 BoundsBottomLeftCorner
 		{
-			return _boundsTopRightCorner;
-		}}
+			get
+			{
+				return _boundsBottomLeftCorner;
+			}
+		}
 
-		public virtual Vector3 BoundsBottomRightCorner { get
+		public virtual Vector3 BoundsTopRightCorner
 		{
-			return _boundsBottomRightCorner;
-		}}
+			get
+			{
+				return _boundsTopRightCorner;
+			}
+		}
 
-		public virtual Vector3 BoundsTop { get
+		public virtual Vector3 BoundsBottomRightCorner
 		{
-			return (_boundsTopLeftCorner + _boundsTopRightCorner)/2 ;
-		}}
+			get
+			{
+				return _boundsBottomRightCorner;
+			}
+		}
 
-		public virtual Vector3 BoundsBottom { get
+		public virtual Vector3 BoundsTop
 		{
-			return (_boundsBottomLeftCorner + _boundsBottomRightCorner)/2 ;
-		}}
+			get
+			{
+				return (_boundsTopLeftCorner + _boundsTopRightCorner) / 2;
+			}
+		}
 
-		public virtual Vector3 BoundsRight { get
+		public virtual Vector3 BoundsBottom
 		{
-			return (_boundsTopRightCorner + _boundsBottomRightCorner)/2 ;
-		}}
+			get
+			{
+				return (_boundsBottomLeftCorner + _boundsBottomRightCorner) / 2;
+			}
+		}
 
-		public virtual Vector3 BoundsLeft { get
+		public virtual Vector3 BoundsRight
 		{
-			return (_boundsTopLeftCorner + _boundsBottomLeftCorner)/2 ;
-		}}
-        
-		public virtual Vector3 BoundsCenter { get
+			get
+			{
+				return (_boundsTopRightCorner + _boundsBottomRightCorner) / 2;
+			}
+		}
+
+		public virtual Vector3 BoundsLeft
 		{
-			return _boundsCenter;
-		}}
-        
-		public virtual float DistanceToTheGround { get
+			get
+			{
+				return (_boundsTopLeftCorner + _boundsBottomLeftCorner) / 2;
+			}
+		}
+
+		public virtual Vector3 BoundsCenter
 		{
-			return _distanceToTheGround;
-		}}
+			get
+			{
+				return _boundsCenter;
+			}
+		}
+
+		public virtual float DistanceToTheGround
+		{
+			get
+			{
+				return _distanceToTheGround;
+			}
+		}
 
 		public virtual Vector2 ExternalForce
 		{
 			get
-			{ 
+			{
 				return _externalForce;
 			}
 		}
-        
+
 		// parameters override storage
 		protected CorgiControllerParameters _overrideParameters;
 		// private local references			
 		protected Vector2 _speed;
-		protected float _friction=0;
-		protected float _fallSlowFactor; 
+		protected float _friction = 0;
+		protected float _fallSlowFactor;
 		protected float _currentGravity = 0;
 		protected Vector2 _externalForce;
 		protected Vector2 _newPosition;
@@ -332,12 +376,12 @@ namespace MoreMountains.CorgiEngine
 		protected MMPathMovement _movingPlatform = null;
 		protected MMPathMovement _pusherPlatform = null;
 		protected float _movingPlatformCurrentGravity;
-		protected bool _gravityActive=true;
+		protected bool _gravityActive = true;
 		protected Collider2D _ignoredCollider = null;
 		protected bool _collisionsOnWithStairs = false;
 
-		protected const float _smallValue=0.0001f;
-		protected const float _movingPlatformsGravity=-500;
+		protected const float _smallValue = 0.0001f;
+		protected const float _movingPlatformsGravity = -500;
 
 		protected Vector2 _originalColliderSize;
 		protected Vector2 _originalColliderOffset;
@@ -345,9 +389,9 @@ namespace MoreMountains.CorgiEngine
 
 		protected Vector3 _crossBelowSlopeAngle;
 
-		protected RaycastHit2D[] _sideHitsStorage;	
-		protected RaycastHit2D[] _belowHitsStorage;	
-		protected RaycastHit2D[] _aboveHitsStorage;	
+		protected RaycastHit2D[] _sideHitsStorage;
+		protected RaycastHit2D[] _belowHitsStorage;
+		protected RaycastHit2D[] _aboveHitsStorage;
 		protected RaycastHit2D _stickRaycastLeft;
 		protected RaycastHit2D _stickRaycastRight;
 		protected RaycastHit2D _stickRaycast;
@@ -395,7 +439,7 @@ namespace MoreMountains.CorgiEngine
 		/// </summary>
 		protected virtual void Awake()
 		{
-			Initialization ();
+			Initialization();
 		}
 
 		protected virtual void Initialization()
@@ -406,11 +450,11 @@ namespace MoreMountains.CorgiEngine
 			_originalColliderSize = _boxCollider.size;
 			_originalColliderOffset = _boxCollider.offset;
 			CurrentSurfaceModifier = null;
-			
+
 			// we test the boxcollider's x offset. If it's not null we trigger a warning.
-			if ((_boxCollider.offset.x!=0) && (Parameters.DisplayWarnings))
+			if ((_boxCollider.offset.x != 0) && (Parameters.DisplayWarnings))
 			{
-				Debug.LogWarning("The boxcollider for "+gameObject.name+" should have an x offset set to zero. Right now this may cause issues when you change direction close to a wall.");
+				Debug.LogWarning("The boxcollider for " + gameObject.name + " should have an x offset set to zero. Right now this may cause issues when you change direction close to a wall.");
 			}
 
 			// raycast list and state init
@@ -423,9 +467,9 @@ namespace MoreMountains.CorgiEngine
 			PlatformMask |= MovingPlatformMask;
 			PlatformMask |= MovingOneWayPlatformMask;
 			PlatformMask |= MidHeightOneWayPlatformMask;
-            
-			_sideHitsStorage = new RaycastHit2D[NumberOfHorizontalRays];	
-			_belowHitsStorage = new RaycastHit2D[NumberOfVerticalRays];	
+
+			_sideHitsStorage = new RaycastHit2D[NumberOfHorizontalRays];
+			_belowHitsStorage = new RaycastHit2D[NumberOfVerticalRays];
 			_aboveHitsStorage = new RaycastHit2D[NumberOfVerticalRays];
 			_update = (UpdateMode == UpdateModes.Update);
 
@@ -480,7 +524,7 @@ namespace MoreMountains.CorgiEngine
 		/// <param name="force">Force to add to the character.</param>
 		public virtual void AddForce(Vector2 force)
 		{
-			_speed += force;	
+			_speed += force;
 			_externalForce += force;
 			ClampSpeed();
 			ClampExternalForce();
@@ -517,7 +561,7 @@ namespace MoreMountains.CorgiEngine
 		public virtual void SetForce(Vector2 force)
 		{
 			_speed = force;
-			_externalForce = force;	
+			_externalForce = force;
 			ClampSpeed();
 			ClampExternalForce();
 		}
@@ -526,7 +570,7 @@ namespace MoreMountains.CorgiEngine
 		///  use this to set the horizontal force applied to the character
 		/// </summary>
 		/// <param name="x">The x value of the velocity.</param>
-		public virtual void SetHorizontalForce (float x)
+		public virtual void SetHorizontalForce(float x)
 		{
 			_speed.x = x;
 			_externalForce.x = x;
@@ -538,7 +582,7 @@ namespace MoreMountains.CorgiEngine
 		///  use this to set the vertical force applied to the character
 		/// </summary>
 		/// <param name="y">The y value of the velocity.</param>
-		public virtual void SetVerticalForce (float y)
+		public virtual void SetVerticalForce(float y)
 		{
 			_speed.y = y;
 			_externalForce.y = y;
@@ -551,7 +595,7 @@ namespace MoreMountains.CorgiEngine
 		/// </summary>
 		public virtual void CachePlatformMask()
 		{
-			_platformMaskSave = PlatformMask;	
+			_platformMaskSave = PlatformMask;
 		}
 
 		/// <summary>
@@ -572,7 +616,7 @@ namespace MoreMountains.CorgiEngine
 		{
 			if (_update)
 			{
-				EveryFrame();	
+				EveryFrame();
 			}
 		}
 
@@ -595,8 +639,8 @@ namespace MoreMountains.CorgiEngine
 				return;
 			}
 
-			ApplyGravity ();
-			FrameInitialization ();
+			ApplyGravity();
+			FrameInitialization();
 
 			// we initialize our rays
 			SetRaysParameters();
@@ -614,7 +658,7 @@ namespace MoreMountains.CorgiEngine
 				CastRaysToTheRight();
 			}
 			else
-			{                
+			{
 				if (_movementDirection == -1)
 				{
 					CastRaysToTheLeft();
@@ -624,18 +668,18 @@ namespace MoreMountains.CorgiEngine
 					CastRaysToTheRight();
 				}
 			}
-			CastRaysBelow();	
+			CastRaysBelow();
 			CastRaysAbove();
 
-			MoveTransform();		
+			MoveTransform();
 
-			SetRaysParameters();	
-			ComputeNewSpeed ();            
-			SetStates ();
+			SetRaysParameters();
+			ComputeNewSpeed();
+			SetStates();
 			ComputeDistanceToTheGround();
 
-			_externalForce.x=0;
-			_externalForce.y=0;
+			_externalForce.x = 0;
+			_externalForce.y = 0;
 
 			FrameExit();
 
@@ -647,12 +691,12 @@ namespace MoreMountains.CorgiEngine
 			_contactList.Clear();
 			// we initialize our newposition, which we'll use in all the next computations			
 			_newPosition = Speed * DeltaTime;
-			State.WasGroundedLastFrame = State.IsCollidingBelow;          
+			State.WasGroundedLastFrame = State.IsCollidingBelow;
 			StandingOnLastFrame = StandingOn;
 			State.WasTouchingTheCeilingLastFrame = State.IsCollidingAbove;
 			CurrentWallCollider = null;
 			_shouldComputeNewSpeed = true;
-			State.Reset(); 
+			State.Reset();
 		}
 
 		/// <summary>
@@ -676,21 +720,24 @@ namespace MoreMountains.CorgiEngine
 			if (_speed.x < -_movementDirectionThreshold)
 			{
 				_movementDirection = -1;
-			} else if (_speed.x > _movementDirectionThreshold)
+			}
+			else if (_speed.x > _movementDirectionThreshold)
 			{
 				_movementDirection = 1;
-			} else if (_externalForce.x < -_movementDirectionThreshold)
+			}
+			else if (_externalForce.x < -_movementDirectionThreshold)
 			{
 				_movementDirection = -1;
-			} else if (_externalForce.x > _movementDirectionThreshold)
+			}
+			else if (_externalForce.x > _movementDirectionThreshold)
 			{
 				_movementDirection = 1;
 			}
 
 			ApplyMovingPlatformMovementDirection(_movingPlatform);
 			ApplyMovingPlatformMovementDirection(_pusherPlatform);
-			
-			_storedMovementDirection = _movementDirection;                        
+
+			_storedMovementDirection = _movementDirection;
 		}
 
 		public virtual void SetPusherPlatform(MMPathMovement newPusherPlatform)
@@ -716,7 +763,6 @@ namespace MoreMountains.CorgiEngine
 		{
 			// we move our transform to its next position
 			RunSafetyBoxcast();
-			
 			_transform.Translate(_newPosition, Space.Self);
 		}
 
@@ -738,7 +784,7 @@ namespace MoreMountains.CorgiEngine
 
 			_safetyExtractionSize.x = Bounds.x * SafetyBoxcastSizeRatio.x - RayOffsetHorizontal;
 			_safetyExtractionSize.y = Bounds.y * SafetyBoxcastSizeRatio.y - RayOffsetVertical;
-			_stickRaycast = MMDebug.BoxCast(_boundsCenter, _safetyExtractionSize, Vector2.Angle(transform.up, Vector2.up), _newPosition.normalized, _newPosition.magnitude, 
+			_stickRaycast = MMDebug.BoxCast(_boundsCenter, _safetyExtractionSize, Vector2.Angle(transform.up, Vector2.up), _newPosition.normalized, _newPosition.magnitude,
 				PlatformMask & ~OneWayPlatformMask & ~MovingOneWayPlatformMask, Color.yellow, true);
 
 			if (_stickRaycast)
@@ -751,7 +797,7 @@ namespace MoreMountains.CorgiEngine
 					_newPosition = _newPosition.normalized * (_stickRaycast.distance - ExtractionIncrement);
 					_safetyExtractionSize.x = Bounds.x - RayOffsetHorizontal;
 					_safetyExtractionSize.y = Bounds.y - RayOffsetVertical;
-					_stickRaycast = MMDebug.BoxCast(_boundsCenter, _safetyExtractionSize, Vector2.Angle(transform.up, Vector2.up), _newPosition.normalized, _newPosition.magnitude, 
+					_stickRaycast = MMDebug.BoxCast(_boundsCenter, _safetyExtractionSize, Vector2.Angle(transform.up, Vector2.up), _newPosition.normalized, _newPosition.magnitude,
 						PlatformMask & ~OneWayPlatformMask & ~MovingOneWayPlatformMask, Color.yellow, true);
 					if (!_stickRaycast)
 					{
@@ -759,7 +805,7 @@ namespace MoreMountains.CorgiEngine
 					}
 					i++;
 				}
-				
+
 			}
 		}
 
@@ -789,19 +835,19 @@ namespace MoreMountains.CorgiEngine
 		/// </summary>
 		protected virtual void HandleMovingPlatforms(MMPathMovement movingPlatform, bool pushingPlatform = false)
 		{
-			if ((movingPlatform != null) && (movingPlatform.enabled))			
+			if ((movingPlatform != null) && (movingPlatform.enabled))
 			{
 				if (!float.IsNaN(movingPlatform.CurrentSpeed.x) && !float.IsNaN(movingPlatform.CurrentSpeed.y) && !float.IsNaN(movingPlatform.CurrentSpeed.z))
 				{
 					_transform.Translate(this.transform.rotation * movingPlatform.CurrentSpeed * DeltaTime);
 				}
 
-				if ( (Time.timeScale == 0) || float.IsNaN(movingPlatform.CurrentSpeed.x) || float.IsNaN(movingPlatform.CurrentSpeed.y) || float.IsNaN(movingPlatform.CurrentSpeed.z) )
+				if ((Time.timeScale == 0) || float.IsNaN(movingPlatform.CurrentSpeed.x) || float.IsNaN(movingPlatform.CurrentSpeed.y) || float.IsNaN(movingPlatform.CurrentSpeed.z))
 				{
 					return;
 				}
 
-				if ((DeltaTime<=0))
+				if ((DeltaTime <= 0))
 				{
 					return;
 				}
@@ -816,10 +862,10 @@ namespace MoreMountains.CorgiEngine
 					State.OnAMovingPlatform = true;
 					GravityActive(false);
 					_movingPlatformCurrentGravity = _movingPlatformsGravity;
-					_newPosition.y = movingPlatform.CurrentSpeed.y * DeltaTime;	
+					_newPosition.y = movingPlatform.CurrentSpeed.y * DeltaTime;
 				}
 
-				_speed = - _newPosition / DeltaTime;	
+				_speed = -_newPosition / DeltaTime;
 				_speed.x = -_speed.x;
 
 				SetRaysParameters();
@@ -836,9 +882,9 @@ namespace MoreMountains.CorgiEngine
 				return;
 			}
 			GravityActive(true);
-			State.OnAMovingPlatform=false;
+			State.OnAMovingPlatform = false;
 			_movingPlatform = null;
-			_movingPlatformCurrentGravity=0;
+			_movingPlatformCurrentGravity = 0;
 		}
 
 		/// <summary>
@@ -857,17 +903,17 @@ namespace MoreMountains.CorgiEngine
 			bool returnValue = false;
 			switch (direction)
 			{
-				case RaycastDirections.left: 
+				case RaycastDirections.left:
 					// we determine the origin of our rays
 					_horizontalRayCastFromBottom = (_boundsBottomRightCorner + _boundsBottomLeftCorner) / 2;
-					_horizontalRayCastToTop = (_boundsTopLeftCorner + _boundsTopRightCorner) / 2;	
+					_horizontalRayCastToTop = (_boundsTopLeftCorner + _boundsTopRightCorner) / 2;
 					_horizontalRayCastFromBottom = _horizontalRayCastFromBottom + (Vector2)transform.up * ObstacleHeightTolerance;
 					_horizontalRayCastToTop = _horizontalRayCastToTop - (Vector2)transform.up * ObstacleHeightTolerance;
 					for (int i = 0; i < NumberOfHorizontalRays; i++)
-					{	
-						Vector2 rayOriginPoint = Vector2.Lerp (_horizontalRayCastFromBottom, _horizontalRayCastToTop, (float)i / (float)(NumberOfHorizontalRays - 1));
-						storageArray [i] = MMDebug.RayCast (rayOriginPoint, -transform.right, rayLength, PlatformMask & ~OneWayPlatformMask & ~MovingOneWayPlatformMask, color, Parameters.DrawRaycastsGizmos);	
-						if (storageArray [i])
+					{
+						Vector2 rayOriginPoint = Vector2.Lerp(_horizontalRayCastFromBottom, _horizontalRayCastToTop, (float)i / (float)(NumberOfHorizontalRays - 1));
+						storageArray[i] = MMDebug.RayCast(rayOriginPoint, -transform.right, rayLength, PlatformMask & ~OneWayPlatformMask & ~MovingOneWayPlatformMask, color, Parameters.DrawRaycastsGizmos);
+						if (storageArray[i])
 						{
 							returnValue = true;
 						}
@@ -877,14 +923,14 @@ namespace MoreMountains.CorgiEngine
 				case RaycastDirections.right:
 					// we determine the origin of our rays
 					_horizontalRayCastFromBottom = (_boundsBottomRightCorner + _boundsBottomLeftCorner) / 2;
-					_horizontalRayCastToTop = (_boundsTopLeftCorner + _boundsTopRightCorner) / 2;	
+					_horizontalRayCastToTop = (_boundsTopLeftCorner + _boundsTopRightCorner) / 2;
 					_horizontalRayCastFromBottom = _horizontalRayCastFromBottom + (Vector2)transform.up * ObstacleHeightTolerance;
 					_horizontalRayCastToTop = _horizontalRayCastToTop - (Vector2)transform.up * ObstacleHeightTolerance;
 					for (int i = 0; i < NumberOfHorizontalRays; i++)
-					{	
-						Vector2 rayOriginPoint = Vector2.Lerp (_horizontalRayCastFromBottom, _horizontalRayCastToTop, (float)i / (float)(NumberOfHorizontalRays - 1));
-						storageArray[i] = MMDebug.RayCast (rayOriginPoint, transform.right, rayLength, PlatformMask & ~OneWayPlatformMask & ~MovingOneWayPlatformMask, color, Parameters.DrawRaycastsGizmos);	
-						if (storageArray [i])
+					{
+						Vector2 rayOriginPoint = Vector2.Lerp(_horizontalRayCastFromBottom, _horizontalRayCastToTop, (float)i / (float)(NumberOfHorizontalRays - 1));
+						storageArray[i] = MMDebug.RayCast(rayOriginPoint, transform.right, rayLength, PlatformMask & ~OneWayPlatformMask & ~MovingOneWayPlatformMask, color, Parameters.DrawRaycastsGizmos);
+						if (storageArray[i])
 						{
 							returnValue = true;
 						}
@@ -894,19 +940,19 @@ namespace MoreMountains.CorgiEngine
 				case RaycastDirections.down:
 					// we determine the origin of our rays
 					_verticalRayCastFromLeft = (_boundsBottomLeftCorner + _boundsTopLeftCorner) / 2;
-					_verticalRayCastToRight = (_boundsBottomRightCorner + _boundsTopRightCorner) / 2;	
+					_verticalRayCastToRight = (_boundsBottomRightCorner + _boundsTopRightCorner) / 2;
 					_verticalRayCastFromLeft += (Vector2)transform.up * RayOffsetVertical;
 					_verticalRayCastToRight += (Vector2)transform.up * RayOffsetVertical;
 					_verticalRayCastFromLeft += (Vector2)transform.right * _newPosition.x;
 					_verticalRayCastToRight += (Vector2)transform.right * _newPosition.x;
 					for (int i = 0; i < NumberOfVerticalRays; i++)
-					{			
-						Vector2 rayOriginPoint = Vector2.Lerp (_verticalRayCastFromLeft, _verticalRayCastToRight, (float)i / (float)(NumberOfVerticalRays - 1));
+					{
+						Vector2 rayOriginPoint = Vector2.Lerp(_verticalRayCastFromLeft, _verticalRayCastToRight, (float)i / (float)(NumberOfVerticalRays - 1));
 
 						if ((_newPosition.y < 0) && (!State.WasGroundedLastFrame))
 						{
-							storageArray [i] = MMDebug.RayCast (rayOriginPoint, -transform.up, rayLength, PlatformMask & ~OneWayPlatformMask & ~MovingOneWayPlatformMask, color, Parameters.DrawRaycastsGizmos);	
-							if (storageArray [i])
+							storageArray[i] = MMDebug.RayCast(rayOriginPoint, -transform.up, rayLength, PlatformMask & ~OneWayPlatformMask & ~MovingOneWayPlatformMask, color, Parameters.DrawRaycastsGizmos);
+							if (storageArray[i])
 							{
 								returnValue = true;
 							}
@@ -917,19 +963,19 @@ namespace MoreMountains.CorgiEngine
 				case RaycastDirections.up:
 					// we determine the origin of our rays
 					_verticalRayCastFromLeft = (_boundsBottomLeftCorner + _boundsTopLeftCorner) / 2;
-					_verticalRayCastToRight = (_boundsBottomRightCorner + _boundsTopRightCorner) / 2;	
+					_verticalRayCastToRight = (_boundsBottomRightCorner + _boundsTopRightCorner) / 2;
 					_verticalRayCastFromLeft += (Vector2)transform.up * RayOffsetVertical;
 					_verticalRayCastToRight += (Vector2)transform.up * RayOffsetVertical;
 					_verticalRayCastFromLeft += (Vector2)transform.right * _newPosition.x;
 					_verticalRayCastToRight += (Vector2)transform.right * _newPosition.x;
 					for (int i = 0; i < NumberOfVerticalRays; i++)
-					{			
-						Vector2 rayOriginPoint = Vector2.Lerp (_verticalRayCastFromLeft, _verticalRayCastToRight, (float)i / (float)(NumberOfVerticalRays - 1));
+					{
+						Vector2 rayOriginPoint = Vector2.Lerp(_verticalRayCastFromLeft, _verticalRayCastToRight, (float)i / (float)(NumberOfVerticalRays - 1));
 
 						if ((_newPosition.y > 0) && (!State.WasGroundedLastFrame))
 						{
-							storageArray [i] = MMDebug.RayCast (rayOriginPoint, transform.up, rayLength, PlatformMask & ~OneWayPlatformMask & ~MovingOneWayPlatformMask, color, Parameters.DrawRaycastsGizmos);	
-							if (storageArray [i])
+							storageArray[i] = MMDebug.RayCast(rayOriginPoint, transform.up, rayLength, PlatformMask & ~OneWayPlatformMask & ~MovingOneWayPlatformMask, color, Parameters.DrawRaycastsGizmos);
+							if (storageArray[i])
 							{
 								returnValue = true;
 							}
@@ -956,11 +1002,11 @@ namespace MoreMountains.CorgiEngine
 		/// Casts rays to the sides of the character, from its center axis.
 		/// If we hit a wall/slope, we check its angle and move or not according to it.
 		/// </summary>
-		protected virtual void CastRaysToTheSides(float raysDirection) 
-		{	
+		protected virtual void CastRaysToTheSides(float raysDirection)
+		{
 			// we determine the origin of our rays
 			_horizontalRayCastFromBottom = (_boundsBottomRightCorner + _boundsBottomLeftCorner) / 2;
-			_horizontalRayCastToTop = (_boundsTopLeftCorner + _boundsTopRightCorner) / 2;	
+			_horizontalRayCastToTop = (_boundsTopLeftCorner + _boundsTopRightCorner) / 2;
 			_horizontalRayCastFromBottom = _horizontalRayCastFromBottom + (Vector2)transform.up * ObstacleHeightTolerance;
 			_horizontalRayCastToTop = _horizontalRayCastToTop - (Vector2)transform.up * ObstacleHeightTolerance;
 
@@ -970,35 +1016,35 @@ namespace MoreMountains.CorgiEngine
 			// we resize our storage if needed
 			if (_sideHitsStorage.Length != NumberOfHorizontalRays)
 			{
-				_sideHitsStorage = new RaycastHit2D[NumberOfHorizontalRays];	
+				_sideHitsStorage = new RaycastHit2D[NumberOfHorizontalRays];
 			}
-                        
+
 			// we cast rays to the sides
-			for (int i = 0; i < NumberOfHorizontalRays;i++)
-			{	
-				Vector2 rayOriginPoint = Vector2.Lerp(_horizontalRayCastFromBottom, _horizontalRayCastToTop, (float)i / (float)(NumberOfHorizontalRays-1));
+			for (int i = 0; i < NumberOfHorizontalRays; i++)
+			{
+				Vector2 rayOriginPoint = Vector2.Lerp(_horizontalRayCastFromBottom, _horizontalRayCastToTop, (float)i / (float)(NumberOfHorizontalRays - 1));
 
 				// if we were grounded last frame and if this is our first ray, we don't cast against one way platforms
-				if ( State.WasGroundedLastFrame && i == 0 )		
+				if (State.WasGroundedLastFrame && i == 0)
 				{
-					_sideHitsStorage[i] = MMDebug.RayCast (rayOriginPoint,raysDirection*(transform.right),horizontalRayLength,PlatformMask, MMColors.Indigo,Parameters.DrawRaycastsGizmos);	
-				}						
+					_sideHitsStorage[i] = MMDebug.RayCast(rayOriginPoint, raysDirection * (transform.right), horizontalRayLength, PlatformMask, MMColors.Indigo, Parameters.DrawRaycastsGizmos);
+				}
 				else
 				{
-					_sideHitsStorage[i] = MMDebug.RayCast (rayOriginPoint,raysDirection*(transform.right),horizontalRayLength,PlatformMask & ~OneWayPlatformMask & ~MovingOneWayPlatformMask, MMColors.Indigo,Parameters.DrawRaycastsGizmos);			
+					_sideHitsStorage[i] = MMDebug.RayCast(rayOriginPoint, raysDirection * (transform.right), horizontalRayLength, PlatformMask & ~OneWayPlatformMask & ~MovingOneWayPlatformMask, MMColors.Indigo, Parameters.DrawRaycastsGizmos);
 				}
 				// if we've hit something
 				if (_sideHitsStorage[i].distance > 0)
-				{	
+				{
 					// if this collider is on our ignore list, we break
 					if (_sideHitsStorage[i].collider == _ignoredCollider)
 					{
 						break;
 					}
-                    
+
 					// we determine and store our current lateral slope angle
 					float hitAngle = Mathf.Abs(Vector2.Angle(_sideHitsStorage[i].normal, transform.up));
-                    
+
 					if (OneWayPlatformMask.MMContains(_sideHitsStorage[i].collider.gameObject))
 					{
 						if (hitAngle > 90)
@@ -1011,7 +1057,7 @@ namespace MoreMountains.CorgiEngine
 					if (_movementDirection == raysDirection)
 					{
 						State.LateralSlopeAngle = hitAngle;
-					}                    
+					}
 
 					// if the lateral slope angle is higher than our maximum slope angle, then we've hit a wall, and stop x movement accordingly
 					if (hitAngle > Parameters.MaximumSlopeAngle)
@@ -1020,7 +1066,7 @@ namespace MoreMountains.CorgiEngine
 						{
 							State.IsCollidingLeft = true;
 							State.DistanceToLeftCollider = _sideHitsStorage[i].distance;
-						} 
+						}
 						else
 						{
 							State.IsCollidingRight = true;
@@ -1036,16 +1082,16 @@ namespace MoreMountains.CorgiEngine
 							if (raysDirection <= 0)
 							{
 								_newPosition.x = -distance
-								                 + _boundsWidth / 2
-								                 + RayOffsetHorizontal * 2 ;
+												 + _boundsWidth / 2
+												 + RayOffsetHorizontal * 2;
 							}
 							else
 							{
 								_newPosition.x = distance
-								                 - _boundsWidth / 2
-								                 - RayOffsetHorizontal * 2 ;
+												 - _boundsWidth / 2
+												 - RayOffsetHorizontal * 2;
 							}
-                            
+
 							// if we're in the air, we prevent the character from being pushed back.
 							if (!State.IsGrounded && (Speed.y != 0) && (!Mathf.Approximately(hitAngle, 90f)))
 							{
@@ -1059,7 +1105,7 @@ namespace MoreMountains.CorgiEngine
 
 						break;
 					}
-				}						
+				}
 			}
 		}
 
@@ -1068,7 +1114,7 @@ namespace MoreMountains.CorgiEngine
 		/// </summary>
 		protected virtual void CastRaysBelow()
 		{
-			_friction=0;
+			_friction = 0;
 
 			if (_newPosition.y < -_smallValue)
 			{
@@ -1083,22 +1129,22 @@ namespace MoreMountains.CorgiEngine
 			{
 				State.IsCollidingBelow = false;
 				return;
-			}				
+			}
 
-			float rayLength = (_boundsHeight / 2) + RayOffsetVertical + RayExtraLengthVertical; 	
+			float rayLength = (_boundsHeight / 2) + RayOffsetVertical + RayExtraLengthVertical;
 
 			if (State.OnAMovingPlatform)
 			{
 				rayLength *= OnMovingPlatformRaycastLengthMultiplier;
-			}	
+			}
 
 			if (_newPosition.y < 0)
 			{
 				rayLength += Mathf.Abs(_newPosition.y);
-			}			
+			}
 
 			_verticalRayCastFromLeft = (_boundsBottomLeftCorner + _boundsTopLeftCorner) / 2;
-			_verticalRayCastToRight = (_boundsBottomRightCorner + _boundsTopRightCorner) / 2;	
+			_verticalRayCastToRight = (_boundsBottomRightCorner + _boundsTopRightCorner) / 2;
 			_verticalRayCastFromLeft += (Vector2)transform.up * RayOffsetVertical;
 			_verticalRayCastToRight += (Vector2)transform.up * RayOffsetVertical;
 			_verticalRayCastFromLeft += (Vector2)transform.right * _newPosition.x;
@@ -1106,14 +1152,14 @@ namespace MoreMountains.CorgiEngine
 
 			if (_belowHitsStorage.Length != NumberOfVerticalRays)
 			{
-				_belowHitsStorage = new RaycastHit2D[NumberOfVerticalRays];	
+				_belowHitsStorage = new RaycastHit2D[NumberOfVerticalRays];
 			}
 
 			_raysBelowLayerMaskPlatforms = PlatformMask;
 
 			_raysBelowLayerMaskPlatformsWithoutOneWay = PlatformMask & ~MidHeightOneWayPlatformMask & ~OneWayPlatformMask & ~MovingOneWayPlatformMask;
 			_raysBelowLayerMaskPlatformsWithoutMidHeight = _raysBelowLayerMaskPlatforms & ~MidHeightOneWayPlatformMask;
-            
+
 			// if what we're standing on is a mid height oneway platform, we turn it into a regular platform for this frame only
 			if (StandingOnLastFrame != null)
 			{
@@ -1122,8 +1168,8 @@ namespace MoreMountains.CorgiEngine
 				{
 					StandingOnLastFrame.layer = LayerMask.NameToLayer("Platforms");
 				}
-			}       
-            
+			}
+
 			// if we were grounded last frame, and not on a one way platform, we ignore any one way platform that would come in our path.
 			if (State.WasGroundedLastFrame)
 			{
@@ -1131,11 +1177,11 @@ namespace MoreMountains.CorgiEngine
 				{
 					if (!MidHeightOneWayPlatformMask.MMContains(StandingOnLastFrame.layer))
 					{
-						_raysBelowLayerMaskPlatforms = _raysBelowLayerMaskPlatformsWithoutMidHeight;                        
+						_raysBelowLayerMaskPlatforms = _raysBelowLayerMaskPlatformsWithoutMidHeight;
 					}
 				}
 			}
-            
+
 			// stairs management
 			if (State.WasGroundedLastFrame)
 			{
@@ -1147,7 +1193,7 @@ namespace MoreMountains.CorgiEngine
 						if (StandingOnCollider.bounds.Contains(_colliderBottomCenterPosition))
 						{
 							_raysBelowLayerMaskPlatforms = _raysBelowLayerMaskPlatforms & ~OneWayPlatformMask | StairsMask;
-						}    
+						}
 					}
 				}
 			}
@@ -1157,29 +1203,29 @@ namespace MoreMountains.CorgiEngine
 				_raysBelowLayerMaskPlatforms = _raysBelowLayerMaskPlatforms & ~OneWayPlatformMask;
 			}
 
-			float smallestDistance = float.MaxValue; 
-			int smallestDistanceIndex = 0; 						
+			float smallestDistance = float.MaxValue;
+			int smallestDistanceIndex = 0;
 			bool hitConnected = false;
 			StandingOn = null;
 			for (int i = 0; i < NumberOfVerticalRays; i++)
 			{
 				StandingOnArray[i] = null;
 			}
-			
+
 			for (int i = 0; i < NumberOfVerticalRays; i++)
 			{
 				Vector2 rayOriginPoint = Vector2.Lerp(_verticalRayCastFromLeft, _verticalRayCastToRight, (float)i / (float)(NumberOfVerticalRays - 1));
-		
+
 				if ((_newPosition.y > 0) && (!State.WasGroundedLastFrame))
 				{
-					_belowHitsStorage[i] = MMDebug.RayCast (rayOriginPoint,-transform.up,rayLength, _raysBelowLayerMaskPlatformsWithoutOneWay, Color.blue,Parameters.DrawRaycastsGizmos);	
-				}					
+					_belowHitsStorage[i] = MMDebug.RayCast(rayOriginPoint, -transform.up, rayLength, _raysBelowLayerMaskPlatformsWithoutOneWay, Color.blue, Parameters.DrawRaycastsGizmos);
+				}
 				else
 				{
-					_belowHitsStorage[i] = MMDebug.RayCast (rayOriginPoint,-transform.up,rayLength, _raysBelowLayerMaskPlatforms, Color.blue,Parameters.DrawRaycastsGizmos);					
-				}					
+					_belowHitsStorage[i] = MMDebug.RayCast(rayOriginPoint, -transform.up, rayLength, _raysBelowLayerMaskPlatforms, Color.blue, Parameters.DrawRaycastsGizmos);
+				}
 
-				float distance = MMMaths.DistanceBetweenPointAndLine (_belowHitsStorage [smallestDistanceIndex].point, _verticalRayCastFromLeft, _verticalRayCastToRight);	
+				float distance = MMMaths.DistanceBetweenPointAndLine(_belowHitsStorage[smallestDistanceIndex].point, _verticalRayCastFromLeft, _verticalRayCastToRight);
 
 				if (_belowHitsStorage[i])
 				{
@@ -1189,13 +1235,13 @@ namespace MoreMountains.CorgiEngine
 					}
 
 					hitConnected = true;
-					State.BelowSlopeAngle = Vector2.Angle( _belowHitsStorage[i].normal, transform.up );
+					State.BelowSlopeAngle = Vector2.Angle(_belowHitsStorage[i].normal, transform.up);
 					State.BlowSlopeNormal = _belowHitsStorage[i].normal;
 					State.BelowSlopeAngleAbsolute = MMMaths.AngleBetween(_belowHitsStorage[i].normal, Vector2.up);
-					
+
 					StandingOnArray[i] = _belowHitsStorage[i].collider.gameObject;
 
-					_crossBelowSlopeAngle = Vector3.Cross (transform.up, _belowHitsStorage [i].normal);
+					_crossBelowSlopeAngle = Vector3.Cross(transform.up, _belowHitsStorage[i].normal);
 					if (_crossBelowSlopeAngle.z < 0)
 					{
 						State.BelowSlopeAngle = -State.BelowSlopeAngle;
@@ -1203,7 +1249,7 @@ namespace MoreMountains.CorgiEngine
 
 					if (_belowHitsStorage[i].distance < smallestDistance)
 					{
-						smallestDistanceIndex=i;
+						smallestDistanceIndex = i;
 						smallestDistance = _belowHitsStorage[i].distance;
 					}
 				}
@@ -1216,28 +1262,28 @@ namespace MoreMountains.CorgiEngine
 			if (hitConnected)
 			{
 				StandingOn = _belowHitsStorage[smallestDistanceIndex].collider.gameObject;
-				StandingOnCollider = _belowHitsStorage [smallestDistanceIndex].collider;
-                
+				StandingOnCollider = _belowHitsStorage[smallestDistanceIndex].collider;
+
 				// if the character is jumping onto a (1-way) platform but not high enough, we do nothing
 				if (
 					!State.WasGroundedLastFrame
-					&& (smallestDistance < _boundsHeight / 2) 
+					&& (smallestDistance < _boundsHeight / 2)
 					&& (
 						OneWayPlatformMask.MMContains(StandingOn.layer)
 						||
 						(MovingOneWayPlatformMask.MMContains(StandingOn.layer) && (_speed.y > 0))
-					) 
+					)
 				)
 				{
-						StandingOn = null;
-						StandingOnCollider = null;
-						State.IsCollidingBelow = false;
-						return;
-					
+					StandingOn = null;
+					StandingOnCollider = null;
+					State.IsCollidingBelow = false;
+					return;
+
 				}
 
 				LastStandingOn = StandingOn;
-				State.IsFalling = false;			
+				State.IsFalling = false;
 				State.IsCollidingBelow = true;
 
 
@@ -1250,22 +1296,22 @@ namespace MoreMountains.CorgiEngine
 				// if not, we just adjust the position based on the raycast hit
 				else
 				{
-					float distance = MMMaths.DistanceBetweenPointAndLine (_belowHitsStorage [smallestDistanceIndex].point, _verticalRayCastFromLeft, _verticalRayCastToRight);
+					float distance = MMMaths.DistanceBetweenPointAndLine(_belowHitsStorage[smallestDistanceIndex].point, _verticalRayCastFromLeft, _verticalRayCastToRight);
 
 					_newPosition.y = -distance
-					                 + _boundsHeight / 2 
-					                 + RayOffsetVertical;
+									 + _boundsHeight / 2
+									 + RayOffsetVertical;
 				}
 
 				if (!State.WasGroundedLastFrame && _speed.y > 0)
 				{
 					_newPosition.y += _speed.y * DeltaTime;
-				}				
+				}
 
 				if (Mathf.Abs(_newPosition.y) < _smallValue)
 				{
 					_newPosition.y = 0;
-				}					
+				}
 
 				// we check if whatever we're standing on applies a friction change
 				_frictionTest = _belowHitsStorage[smallestDistanceIndex].collider.gameObject.MMGetComponentNoAlloc<SurfaceModifier>();
@@ -1287,12 +1333,12 @@ namespace MoreMountains.CorgiEngine
 			}
 			else
 			{
-				State.IsCollidingBelow=false;
-				if(State.OnAMovingPlatform)
+				State.IsCollidingBelow = false;
+				if (State.OnAMovingPlatform)
 				{
 					DetachFromMovingPlatform();
 				}
-			}	
+			}
 
 			if (StickToSlopes)
 			{
@@ -1308,47 +1354,47 @@ namespace MoreMountains.CorgiEngine
 			float rayLength = State.IsGrounded ? RayOffsetVertical : _newPosition.y;
 			rayLength += _boundsHeight / 2;
 
-			bool hitConnected=false; 
+			bool hitConnected = false;
 
 			_aboveRayCastStart = (_boundsBottomLeftCorner + _boundsTopLeftCorner) / 2;
-			_aboveRayCastEnd = (_boundsBottomRightCorner + _boundsTopRightCorner) / 2;	
+			_aboveRayCastEnd = (_boundsBottomRightCorner + _boundsTopRightCorner) / 2;
 
 			_aboveRayCastStart += (Vector2)transform.right * _newPosition.x;
 			_aboveRayCastEnd += (Vector2)transform.right * _newPosition.x;
 
 			if (_aboveHitsStorage.Length != NumberOfVerticalRays)
 			{
-				_aboveHitsStorage = new RaycastHit2D[NumberOfVerticalRays];	
+				_aboveHitsStorage = new RaycastHit2D[NumberOfVerticalRays];
 			}
 
-			float smallestDistance=float.MaxValue;
+			float smallestDistance = float.MaxValue;
 
 			int collidingIndex = 0;
-			for (int i=0; i<NumberOfVerticalRays;i++)
-			{							
-				Vector2 rayOriginPoint = Vector2.Lerp(_aboveRayCastStart,_aboveRayCastEnd,(float)i/(float)(NumberOfVerticalRays-1));
-				_aboveHitsStorage[i] = MMDebug.RayCast (rayOriginPoint,(transform.up), rayLength, PlatformMask & ~OneWayPlatformMask & ~MovingOneWayPlatformMask, MMColors.Cyan, Parameters.DrawRaycastsGizmos);	
+			for (int i = 0; i < NumberOfVerticalRays; i++)
+			{
+				Vector2 rayOriginPoint = Vector2.Lerp(_aboveRayCastStart, _aboveRayCastEnd, (float)i / (float)(NumberOfVerticalRays - 1));
+				_aboveHitsStorage[i] = MMDebug.RayCast(rayOriginPoint, (transform.up), rayLength, PlatformMask & ~OneWayPlatformMask & ~MovingOneWayPlatformMask, MMColors.Cyan, Parameters.DrawRaycastsGizmos);
 
 				if (_aboveHitsStorage[i])
 				{
-					hitConnected=true;
+					hitConnected = true;
 					collidingIndex = i;
 
 					if (_aboveHitsStorage[i].collider == _ignoredCollider)
 					{
 						break;
 					}
-					if (_aboveHitsStorage[i].distance<smallestDistance)
+					if (_aboveHitsStorage[i].distance < smallestDistance)
 					{
 						smallestDistance = _aboveHitsStorage[i].distance;
 					}
-				}					
-			}	
+				}
+			}
 
 			if (hitConnected)
 			{
 				_newPosition.y = smallestDistance - _boundsHeight / 2;
-                
+
 				if ((State.IsGrounded) && (_newPosition.y < 0))
 				{
 					_newPosition.y = 0;
@@ -1362,7 +1408,7 @@ namespace MoreMountains.CorgiEngine
 				}
 
 				SetVerticalForce(0);
-			}	
+			}
 		}
 
 		/// <summary>
@@ -1372,18 +1418,18 @@ namespace MoreMountains.CorgiEngine
 		{
 			// if we're in the air, don't have to stick to slopes, being pushed up or on a moving platform, we exit
 			if ((_newPosition.y >= StickToSlopesOffsetY)
-			    || (_newPosition.y <= -StickToSlopesOffsetY)
-			    || (State.IsJumping)
-			    || (!StickToSlopes)
-			    || (!State.WasGroundedLastFrame)
-			    || (_externalForce.y > 0)
-			    || (_movingPlatform != null))
+				|| (_newPosition.y <= -StickToSlopesOffsetY)
+				|| (State.IsJumping)
+				|| (!StickToSlopes)
+				|| (!State.WasGroundedLastFrame)
+				|| (_externalForce.y > 0)
+				|| (_movingPlatform != null))
 			{
 				// edge case for stairs
 				if (!(!State.WasGroundedLastFrame
-				      && ((LastStandingOn != null) && StairsMask.MMContains(LastStandingOn.layer))
-				      && !(State.IsJumping) 
-				    ))
+					  && ((LastStandingOn != null) && StairsMask.MMContains(LastStandingOn.layer))
+					  && !(State.IsJumping)
+					))
 				{
 					return;
 				}
@@ -1431,10 +1477,10 @@ namespace MoreMountains.CorgiEngine
 			{
 				belowSlopeAngleRight = -belowSlopeAngleRight;
 			}
-            
+
 			float belowSlopeAngle = 0f;
-            
-            
+
+
 			castFromLeft = (Mathf.Abs(belowSlopeAngleLeft) > Mathf.Abs(belowSlopeAngleRight));
 
 			// if we're on a slope
@@ -1463,8 +1509,8 @@ namespace MoreMountains.CorgiEngine
 			{
 				castFromLeft = (_stickRaycastLeft.distance < _stickRaycastRight.distance);
 				belowSlopeAngle = (castFromLeft) ? belowSlopeAngleLeft : belowSlopeAngleRight;
-			}     
-            
+			}
+
 			// if we're on a damn spike, we handle it and exit
 			if ((belowSlopeAngleLeft > 0f) && (belowSlopeAngleRight < 0f))
 			{
@@ -1477,7 +1523,7 @@ namespace MoreMountains.CorgiEngine
 					}
 
 					_newPosition.y = -Mathf.Abs(_stickRaycast.point.y - _rayCastOrigin.y)
-					                 + _boundsHeight / 2;
+									 + _boundsHeight / 2;
 
 					State.IsCollidingBelow = true;
 				}
@@ -1485,7 +1531,7 @@ namespace MoreMountains.CorgiEngine
 				return;
 			}
 
-			_stickRaycast = castFromLeft ? _stickRaycastLeft : _stickRaycastRight;	
+			_stickRaycast = castFromLeft ? _stickRaycastLeft : _stickRaycastRight;
 
 			// we cast a ray, if it hits, we move to match its height
 			if (_stickRaycast)
@@ -1495,11 +1541,11 @@ namespace MoreMountains.CorgiEngine
 					return;
 				}
 
-				_newPosition.y = -Mathf.Abs(_stickRaycast.point.y - _rayCastOrigin.y) 
-				                 + _boundsHeight / 2 ;
+				_newPosition.y = -Mathf.Abs(_stickRaycast.point.y - _rayCastOrigin.y)
+								 + _boundsHeight / 2;
 
 				State.IsCollidingBelow = true;
-			}	
+			}
 		}
 
 		/// <summary>
@@ -1510,8 +1556,8 @@ namespace MoreMountains.CorgiEngine
 			// we compute the new speed
 			if ((DeltaTime > 0) && _shouldComputeNewSpeed)
 			{
-				_speed = _newPosition / DeltaTime;	
-			}	
+				_speed = _newPosition / DeltaTime;
+			}
 
 			// we apply our slope speed factor based on the slope's angle
 			if (State.IsGrounded)
@@ -1519,7 +1565,7 @@ namespace MoreMountains.CorgiEngine
 				_speed.x *= Parameters.SlopeAngleSpeedFactor.Evaluate(Mathf.Abs(State.BelowSlopeAngle) * Mathf.Sign(_speed.y));
 			}
 
-			if (!State.OnAMovingPlatform)				
+			if (!State.OnAMovingPlatform)
 			{
 				// we make sure the velocity doesn't exceed the MaxVelocity specified in the parameters
 				ClampSpeed();
@@ -1529,14 +1575,14 @@ namespace MoreMountains.CorgiEngine
 
 		protected virtual void ClampSpeed()
 		{
-			_speed.x = Mathf.Clamp(_speed.x,-Parameters.MaxVelocity.x,Parameters.MaxVelocity.x);
-			_speed.y = Mathf.Clamp(_speed.y,-Parameters.MaxVelocity.y,Parameters.MaxVelocity.y);
+			_speed.x = Mathf.Clamp(_speed.x, -Parameters.MaxVelocity.x, Parameters.MaxVelocity.x);
+			_speed.y = Mathf.Clamp(_speed.y, -Parameters.MaxVelocity.y, Parameters.MaxVelocity.y);
 		}
 
 		protected virtual void ClampExternalForce()
 		{
-			_externalForce.x = Mathf.Clamp(_externalForce.x,-Parameters.MaxVelocity.x,Parameters.MaxVelocity.x);
-			_externalForce.y = Mathf.Clamp(_externalForce.y,-Parameters.MaxVelocity.y,Parameters.MaxVelocity.y);
+			_externalForce.x = Mathf.Clamp(_externalForce.x, -Parameters.MaxVelocity.x, Parameters.MaxVelocity.x);
+			_externalForce.y = Mathf.Clamp(_externalForce.y, -Parameters.MaxVelocity.y, Parameters.MaxVelocity.y);
 		}
 
 		/// <summary>
@@ -1545,15 +1591,15 @@ namespace MoreMountains.CorgiEngine
 		protected virtual void SetStates()
 		{
 			// we change states depending on the outcome of the movement
-			if( !State.WasGroundedLastFrame && State.IsCollidingBelow )
+			if (!State.WasGroundedLastFrame && State.IsCollidingBelow)
 			{
-				State.JustGotGrounded=true;
+				State.JustGotGrounded = true;
 			}
 
 			if (State.IsCollidingLeft || State.IsCollidingRight || State.IsCollidingBelow || State.IsCollidingAbove)
 			{
 				OnCorgiColliderHit();
-			}	
+			}
 		}
 
 		/// <summary>
@@ -1584,7 +1630,7 @@ namespace MoreMountains.CorgiEngine
 					_distanceToTheGround = -1f;
 					return;
 				}
-				_distanceToTheGround = _distanceToTheGroundRaycast.distance - _boundsHeight / 2 ;
+				_distanceToTheGround = _distanceToTheGroundRaycast.distance - _boundsHeight / 2;
 			}
 			else
 			{
@@ -1595,12 +1641,12 @@ namespace MoreMountains.CorgiEngine
 		/// <summary>
 		/// Creates a rectangle with the boxcollider's size for ease of use and draws debug lines along the different raycast origin axis
 		/// </summary>
-		public virtual void SetRaysParameters() 
-		{		
+		public virtual void SetRaysParameters()
+		{
 			float top = _boxCollider.offset.y + (_boxCollider.size.y / 2f);
 			float bottom = _boxCollider.offset.y - (_boxCollider.size.y / 2f);
 			float left = _boxCollider.offset.x - (_boxCollider.size.x / 2f);
-			float right = _boxCollider.offset.x + (_boxCollider.size.x /2f);
+			float right = _boxCollider.offset.x + (_boxCollider.size.x / 2f);
 
 			_boundsTopLeftCorner.x = left;
 			_boundsTopLeftCorner.y = top;
@@ -1614,14 +1660,14 @@ namespace MoreMountains.CorgiEngine
 			_boundsBottomRightCorner.x = right;
 			_boundsBottomRightCorner.y = bottom;
 
-			_boundsTopLeftCorner = transform.TransformPoint (_boundsTopLeftCorner);
-			_boundsTopRightCorner = transform.TransformPoint (_boundsTopRightCorner);
-			_boundsBottomLeftCorner = transform.TransformPoint (_boundsBottomLeftCorner);
-			_boundsBottomRightCorner = transform.TransformPoint (_boundsBottomRightCorner);
+			_boundsTopLeftCorner = transform.TransformPoint(_boundsTopLeftCorner);
+			_boundsTopRightCorner = transform.TransformPoint(_boundsTopRightCorner);
+			_boundsBottomLeftCorner = transform.TransformPoint(_boundsBottomLeftCorner);
+			_boundsBottomRightCorner = transform.TransformPoint(_boundsBottomRightCorner);
 			_boundsCenter = _boxCollider.bounds.center;
 
-			_boundsWidth = Vector2.Distance (_boundsBottomLeftCorner, _boundsBottomRightCorner);
-			_boundsHeight = Vector2.Distance (_boundsBottomLeftCorner, _boundsTopLeftCorner);
+			_boundsWidth = Vector2.Distance(_boundsBottomLeftCorner, _boundsBottomRightCorner);
+			_boundsHeight = Vector2.Distance(_boundsBottomLeftCorner, _boundsTopLeftCorner);
 		}
 
 		public virtual void SetIgnoreCollider(Collider2D newIgnoredCollider)
@@ -1638,7 +1684,7 @@ namespace MoreMountains.CorgiEngine
 			// we turn the collisions off
 			CollisionsOff();
 			// we wait for a few seconds
-			yield return new WaitForSeconds (duration);
+			yield return new WaitForSeconds(duration);
 			// we turn them on again
 			CollisionsOn();
 		}
@@ -1660,7 +1706,7 @@ namespace MoreMountains.CorgiEngine
 		/// </summary>
 		public virtual void CollisionsOff()
 		{
-			PlatformMask=0;
+			PlatformMask = 0;
 		}
 
 		protected GameObject _detachmentObject;
@@ -1710,17 +1756,17 @@ namespace MoreMountains.CorgiEngine
 			switch (DetachmentMethod)
 			{
 				case DetachmentMethods.Layer:
-					CollisionsOffWithMovingPlatformsLayer ();
-					yield return new WaitForSeconds (duration);
-					CollisionsOn ();
+					CollisionsOffWithMovingPlatformsLayer();
+					yield return new WaitForSeconds(duration);
+					CollisionsOn();
 					break;
 				case DetachmentMethods.Object:
 					// we set our current platform collider as ignored
-					SetIgnoreCollider (StandingOnCollider);
+					SetIgnoreCollider(StandingOnCollider);
 					// we wait for a few seconds
-					yield return new WaitForSeconds (duration);
+					yield return new WaitForSeconds(duration);
 					// we turn clear it
-					SetIgnoreCollider (null);	
+					SetIgnoreCollider(null);
 					break;
 				case DetachmentMethods.LayerChange:
 					_detachmentObject = StandingOnCollider.gameObject;
@@ -1816,9 +1862,9 @@ namespace MoreMountains.CorgiEngine
 		/// This is temporary - typically when crouching - and will be reverted by ResetColliderSize()
 		/// </summary>
 		/// <param name="newSize">New size.</param>
-		public virtual void ResizeCollider(Vector2 newSize) 
+		public virtual void ResizeCollider(Vector2 newSize)
 		{
-			float newYOffset = _originalColliderOffset.y - (_originalColliderSize.y - newSize.y) / 2 ;
+			float newYOffset = _originalColliderOffset.y - (_originalColliderSize.y - newSize.y) / 2;
 
 			_boxCollider.size = newSize;
 			_boxCollider.offset = newYOffset * Vector3.up;
@@ -1936,7 +1982,7 @@ namespace MoreMountains.CorgiEngine
 			if (hit == null)
 			{
 				return destination;
-			}                
+			}
 			else
 			{
 				// if the original destination wasn't safe, we find the closest safe point between our controller and the obstacle
@@ -1967,8 +2013,8 @@ namespace MoreMountains.CorgiEngine
 				newPosition.y = this.transform.position.y - _distanceToTheGround;
 				newPosition.z = this._transform.position.z;
 				SetTransformPosition(newPosition);
-		        
-				State.IsFalling = false;			
+
+				State.IsFalling = false;
 				State.IsCollidingBelow = true;
 				_speed = Vector2.zero;
 				_externalForce = Vector2.zero;
@@ -1978,21 +2024,21 @@ namespace MoreMountains.CorgiEngine
 		/// <summary>
 		/// triggered when the character's raycasts collide with something 
 		/// </summary>
-		protected virtual void OnCorgiColliderHit() 
+		protected virtual void OnCorgiColliderHit()
 		{
-			foreach (RaycastHit2D hit in _contactList )
-			{	
+			foreach (RaycastHit2D hit in _contactList)
+			{
 				if (Parameters.Physics2DInteraction)
 				{
 					Rigidbody2D body = hit.collider.attachedRigidbody;
 					if (body == null || body.isKinematic || body.bodyType == RigidbodyType2D.Static)
 					{
 						return;
-					}                        
+					}
 					Vector3 pushDirection = new Vector3(_externalForce.x, 0, 0);
-					body.velocity = pushDirection.normalized * Parameters.Physics2DPushForce;		
-				}	
-			}	
+					body.velocity = pushDirection.normalized * Parameters.Physics2DPushForce;
+				}
+			}
 		}
 
 		/// <summary>
@@ -2005,14 +2051,14 @@ namespace MoreMountains.CorgiEngine
 			if (parameters != null)
 			{
 				// if the object we're colliding with has parameters, we apply them to our character.
-				_overrideParameters = parameters.ControllerParameters;	
+				_overrideParameters = parameters.ControllerParameters;
 				if (parameters.ResetForcesOnEntry)
 				{
-					SetForce (Vector2.zero);
+					SetForce(Vector2.zero);
 				}
 				if (parameters.MultiplyForcesOnEntry)
 				{
-					SetForce(Vector2.Scale(parameters.ForceMultiplierOnEntry,Speed));
+					SetForce(Vector2.Scale(parameters.ForceMultiplierOnEntry, Speed));
 				}
 			}
 		}
@@ -2021,7 +2067,7 @@ namespace MoreMountains.CorgiEngine
 		/// triggered while the character stays inside another collider
 		/// </summary>
 		/// <param name="collider">the object we're colliding with.</param>
-		protected virtual void OnTriggerStay2D( Collider2D collider )
+		protected virtual void OnTriggerStay2D(Collider2D collider)
 		{
 		}
 
@@ -2030,12 +2076,12 @@ namespace MoreMountains.CorgiEngine
 		/// </summary>
 		/// <param name="collider">the object we're colliding with.</param>
 		protected virtual void OnTriggerExit2D(Collider2D collider)
-		{		
+		{
 			CorgiControllerPhysicsVolume2D parameters = collider.gameObject.MMGetComponentNoAlloc<CorgiControllerPhysicsVolume2D>();
 			if (parameters != null)
 			{
 				// if the object we were colliding with had parameters, we reset our character's parameters
-				_overrideParameters = null;	
+				_overrideParameters = null;
 			}
 		}
 	}

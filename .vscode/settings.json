@@ -51,5 +51,6 @@
         "temp/": true,
         "Temp/": true
     },
-    "dotnet.defaultSolution": "HitoriPlanet3D.sln"
+    "dotnet.defaultSolution": "HitoriPlanet3D.sln",
+    "git.ignoreLimitWarning": true
 }
